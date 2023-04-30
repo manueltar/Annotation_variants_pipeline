@@ -8,7 +8,7 @@ $ bash 313_new_calculator_of_scores.sh <Path_to_output_files> <Memory allocation
 e.g. $ bash 313_new_calculator_of_scores.sh Annotation_results/ 4000 1 normal
 
 
-# Subscript: 346_binder_GWAS_and_Z_score.R -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Subscript: 346_binder_GWAS_and_Z_score.R 
 
 ################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
 
@@ -53,7 +53,7 @@ chr1_1689164_C_T        4154    rs2235536       chr1    1689164 C       T       
     VAR     value   value_Z_score   variable
     chr10_101222300_G_A     0.104047        -1.20875664040154       MAF
 
-# Subscript: 340_binder_CADD.R -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Subscript: 340_binder_CADD.R 
 
 
 
