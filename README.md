@@ -19,39 +19,39 @@ chr1_1689164_C_T        4154    rs2235536       chr1    1689164 C       T       
 
 ################### Pseudocode:
 
-   colnames(ALL_dB)[which(colnames(ALL_dB) == "finemap_prob")]<-"PP" # change name to PP (Posterior Probability)
-   colnames(ALL_dB)[which(colnames(ALL_dB) == "maf_origin")]<-"MAF" # change name to MAF (Minimum Allele Frequency)
+colnames(ALL_dB)[which(colnames(ALL_dB) == "finemap_prob")]<-"PP" # change name to PP (Posterior Probability)
+colnames(ALL_dB)[which(colnames(ALL_dB) == "maf_origin")]<-"MAF" # change name to MAF (Minimum Allele Frequency)
 
-   ALL_dB$Absolute_effect_size<-abs(ALL_dB$finemap_beta) # calculate the absolute effect size from the effect size
+ALL_dB$Absolute_effect_size<-abs(ALL_dB$finemap_beta) # calculate the absolute effect size from the effect size
 
-    ALL_dB.dt<-data.table(ALL_dB, key="VAR")
-    ALL_dB_MAX_AF<-as.data.frame(ALL_dB.dt[,.SD[which.max(MAF)], by=key(ALL_dB.dt)], stringsAsFactors=F) # Calculate the maximum MAF per variant (some variants have two values slightly different)
+ALL_dB.dt<-data.table(ALL_dB, key="VAR")
+ALL_dB_MAX_AF<-as.data.frame(ALL_dB.dt[,.SD[which.max(MAF)], by=key(ALL_dB.dt)], stringsAsFactors=F) # Calculate the maximum MAF per variant (some variants have two values slightly different)
 
-    ALL_dB_MAX_AF_subset$mean_value<-mean(ALL_dB_MAX_AF_subset$MAF)
-    ALL_dB_MAX_AF_subset$sd_value<-sd(ALL_dB_MAX_AF_subset$MAF)
-    ALL_dB_MAX_AF_subset$MAF_Z_score<-(ALL_dB_MAX_AF_subset$MAF-ALL_dB_MAX_AF_subset$mean_value)/ALL_dB_MAX_AF_subset$sd_value # Z score normalisation of the MAF values
+ALL_dB_MAX_AF_subset$mean_value<-mean(ALL_dB_MAX_AF_subset$MAF)
+ALL_dB_MAX_AF_subset$sd_value<-sd(ALL_dB_MAX_AF_subset$MAF)
+ALL_dB_MAX_AF_subset$MAF_Z_score<-(ALL_dB_MAX_AF_subset$MAF-ALL_dB_MAX_AF_subset$mean_value)/ALL_dB_MAX_AF_subset$sd_value # Z score normalisation of the MAF values
 
-    ALL_dB_subset.m<-melt(ALL_dB_subset, id.vars=c("VAR","phenotype"))
-    ALL_dB_subset.m.dt<-data.table(ALL_dB_subset.m, key=c("phenotype","variable"))
-    ALL_dB_subset.m_GWAS_Type_parameters<-as.data.frame(ALL_dB_subset.m.dt[,.(mean_value=mean(value, na.rm =T),
-                                                          sd_value=sd(value, na.rm =T)),
-                                                       by=key(ALL_dB_subset.m.dt)], stringsAsFactors=F)
+ALL_dB_subset.m<-melt(ALL_dB_subset, id.vars=c("VAR","phenotype"))
+ALL_dB_subset.m.dt<-data.table(ALL_dB_subset.m, key=c("phenotype","variable"))
+ALL_dB_subset.m_GWAS_Type_parameters<-as.data.frame(ALL_dB_subset.m.dt[,.(mean_value=mean(value, na.rm =T),
+sd_value=sd(value, na.rm =T)),
+by=key(ALL_dB_subset.m.dt)], stringsAsFactors=F)
 
-    ALL_dB_subset.m<-merge(ALL_dB_subset.m,
-                              ALL_dB_subset.m_GWAS_Type_parameters,
-                by=c("phenotype","variable"))
-    ALL_dB_subset.m$value_Z_score<-(ALL_dB_subset.m$value-ALL_dB_subset.m$mean_value)/ALL_dB_subset.m$sd_value # Z score per phenotype Absolute_effect_size and PP 
+ALL_dB_subset.m<-merge(ALL_dB_subset.m,
+ALL_dB_subset.m_GWAS_Type_parameters,
+by=c("phenotype","variable"))
+ALL_dB_subset.m$value_Z_score<-(ALL_dB_subset.m$value-ALL_dB_subset.m$mean_value)/ALL_dB_subset.m$sd_value # Z score per phenotype Absolute_effect_size and PP 
 
-    write.table(ALL_dB_subset.m_subset, file="GWAS_GLOBAL_per_traits.tsv", sep="\t", quote = F, row.names = F)
-    write.table(ALL_dB_MAX_AF_subset_double, file="MAF_GLOBAL.tsv", sep="\t", quote = F, row.names = F) # Save the two files separately
+write.table(ALL_dB_subset.m_subset, file="GWAS_GLOBAL_per_traits.tsv", sep="\t", quote = F, row.names = F)
+write.table(ALL_dB_MAX_AF_subset_double, file="MAF_GLOBAL.tsv", sep="\t", quote = F, row.names = F) # Save the two files separately
 
-    $ head GWAS_GLOBAL_per_traits.tsv
-    VAR     phenotype       variable        value   value_Z_score
-    chr2_181894386_CT_C     baso    Absolute_effect_size    0.0147284       -0.409226791052507
+$ head GWAS_GLOBAL_per_traits.tsv
+VAR     phenotype       variable        value   value_Z_score
+chr2_181894386_CT_C     baso    Absolute_effect_size    0.0147284       -0.409226791052507
 
-    $ head MAF_GLOBAL.tsv
-    VAR     value   value_Z_score   variable
-    chr10_101222300_G_A     0.104047        -1.20875664040154       MAF
+$ head MAF_GLOBAL.tsv
+VAR     value   value_Z_score   variable
+chr10_101222300_G_A     0.104047        -1.20875664040154       MAF
 
 # Subscript: 340_binder_CADD.R 
 
