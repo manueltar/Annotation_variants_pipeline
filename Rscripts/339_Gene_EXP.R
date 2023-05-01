@@ -445,9 +445,6 @@ Z_score_normalization_and_convergence = function(option_list)
   
   GENE_EXP_ranked$Overall_weight_Z_score<-(GENE_EXP_ranked$Overall_weight-GENE_EXP_ranked$mean_Overall_weight)/GENE_EXP_ranked$sd_Overall_weight
   
-  
-  GENE_EXP_ranked$Overall_weight_Z_score<-(GENE_EXP_ranked$Overall_weight-GENE_EXP_ranked$mean_Overall_weight)/GENE_EXP_ranked$sd_Overall_weight
-  
   cat("GENE_EXP_ranked_POST_GENE_EXP_pre_ranked.m_Z_score\n")
   cat(str(GENE_EXP_ranked))
   cat("\n")

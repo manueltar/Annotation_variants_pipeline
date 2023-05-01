@@ -670,26 +670,131 @@ chr1_202129205_G_A      0.868914937906556       2.33058889131214        multi_li
 chr12_111844956_C_T     0.353553390593274       -0.114069886812755      multi_lineage_ATAC
 
 
+# 338_binder_of_scores_Gene_EXP.R
+
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: GENE_EXP_Harmonization.tsv Mean gene expression values for all the BluePrint cell types. See Table Sn for the actual samples included.
+
+d-B     sd_VB-Class-switched-B  cv_VB-Class-switched-B  Rank_GENE_VB-Class-switched-B   Rank_discretized_VB-Class-switched-B    mean_VB-mem-B   sd_VB-mem-B     cv_VB-mem-B     Rank_GENE_VB-mem-B      Rank_discretized_VB-mem-B       mean_CB-CD4     sd_CB-CD4       cv_CB-CD4       Rank_GENE_CB-CD4        Rank_discretized_CB-CD4      mean_VB-CD4     sd_VB-CD4       cv_VB-CD4       Rank_GENE_VB-CD4        Rank_discretized_VB-CD4 mean_VB-Mem-CD4 sd_VB-Mem-CD4   cv_VB-Mem-CD4   Rank_GENE_VB-Mem-CD4    Rank_discretized_VB-Mem-CD4     mean_VB-Eff-mem-CD4     sd_VB-Eff-mem-CD4       cv_VB-Eff-mem-CD4       Rank_GENE_VB-Eff-mem-CD4    Rank_discretized_VB-Eff-mem-CD4  mean_VB-T-Reg   sd_VB-T-Reg     cv_VB-T-Reg     Rank_GENE_VB-T-Reg      Rank_discretized_VB-T-Reg       mean_CB-CD8     sd_CB-CD8       cv_CB-CD8       Rank_GENE_CB-CD8        Rank_discretized_CB-CD8 mean_VB-Mem-CD8 sd_VB-Mem-CD8   cv_VB-Mem-CD8   Rank_GENE_VB-Mem-CD8    Rank_discretized_VB-Mem-CD8  mean_VB-Eff-mem-CD8     sd_VB-Eff-mem-CD8       cv_VB-Eff-mem-CD8       Rank_GENE_VB-Eff-mem-CD8        Rank_discretized_VB-Eff-mem-CD8 mean_CB-NK      sd_CB-NK        cv_CB-NK        Rank_GENE_CB-NK Rank_discretized_CB-NK  mean_VB-NK      sd_VB-NK        cv_VB-NK        Rank_GENE_VB-NK Rank_discretized_VB-NK       mean_CB-MONO    sd_CB-MONO      cv_CB-MONO      Rank_GENE_CB-MONO       Rank_discretized_CB-MONO        mean_VB-MONO    sd_VB-MONO      cv_VB-MONO      Rank_GENE_VB-MONO       Rank_discretized_VB-MONO        mean_CB-MAC     sd_CB-MAC       cv_CB-MAC       Rank_GENE_CB-MAC        Rank_discretized_CB-MAC      mean_VB-MAC     sd_VB-MAC       cv_VB-MAC       Rank_GENE_VB-MAC        Rank_discretized_VB-MAC mean_VB-Inf-MAC sd_VB-Inf-MAC   cv_VB-Inf-MAC   Rank_GENE_VB-Inf-MAC    Rank_discretized_VB-Inf-MAC     mean_VB-Alt-MAC sd_VB-Alt-MAC   cv_VB-Alt-MAC   Rank_GENE_VB-Alt-MAC    Rank_discretized_VB-Alt-MAC     mean_CB-Alt-MAC      sd_CB-Alt-MAC   cv_CB-Alt-MAC   Rank_GENE_CB-Alt-MAC    Rank_discretized_CB-Alt-MAC     mean_CB-NEUT    sd_CB-NEUT      cv_CB-NEUT      Rank_GENE_CB-NEUT       Rank_discretized_CB-NEUT        mean_VB-NEUT    sd_VB-NEUT      cv_VB-NEUT      Rank_GENE_VB-NEUT       Rank_discretized_VB-NEUT        mean_HSC     sd_HSC  cv_HSC  Rank_GENE_HSC   Rank_discretized_HSC    mean_HMP        sd_HMP  cv_HMP  Rank_GENE_HMP   Rank_discretized_HMP    mean_MEP        sd_MEP  cv_MEP  Rank_GENE_MEP   Rank_discretized_MEP    mean_CMP        sd_CMP  cv_CMP  Rank_GENE_CMP   Rank_discretized_CMP    mean_GMP        sd_GMP  cv_GMP  Rank_GENE_GMP        Rank_discretized_GMP    mean_CLP        sd_CLP  cv_CLP  Rank_GENE_CLP   Rank_discretized_CLP    mean_CB-DC      sd_CB-DC        cv_CB-DC        Rank_GENE_CB-DC Rank_discretized_CB-DC  mean_CB-Prolif-Endo     sd_CB-Prolif-Endo       cv_CB-Prolif-Endo       Rank_GENE_CB-Prolif-Endo        Rank_discretized_CB-Prolif-Endo      mean_CB-Resting-Endo    sd_CB-Resting-Endo      cv_CB-Resting-Endo      Rank_GENE_CB-Resting-Endo       Rank_discretized_CB-Resting-Endo        mean_VB-stim-0d-MONO    sd_VB-stim-0d-MONO      cv_VB-stim-0d-MONO      Rank_GENE_VB-stim-0d-MONO       Rank_discretized_VB-stim-0d-MONO        mean_VB-stim-none-MONO       sd_VB-stim-none-MONO    cv_VB-stim-none-MONO    Rank_GENE_VB-stim-none-MONO     Rank_discretized_VB-stim-none-MONO      mean_VB-stim-6d-untreated-MAC   sd_VB-stim-6d-untreated-MAC     cv_VB-stim-6d-untreated-MAC     Rank_GENE_VB-stim-6d-untreated-MAC      Rank_discretized_VB-stim-6d-untreated-MAC    mean_VB-stim-6d-Glucan-MAC      sd_VB-stim-6d-Glucan-MAC        cv_VB-stim-6d-Glucan-MAC        Rank_GENE_VB-stim-6d-Glucan-MAC Rank_discretized_VB-stim-6d-Glucan-MAC  mean_VB-stim-6d-LPS-MAC sd_VB-stim-6d-LPS-MAC   cv_VB-stim-6d-LPS-MAC   Rank_GENE_VB-stim-6d-LPS-MAC    Rank_discretized_VB-stim-6d-LPS-MAC
+ENSG00000000003 TSPAN6  1.90653670949975        0.642239497896798       33.6861857784691        0.336711933472643       [1.64,3.04)     6.19232744667757        3.34852137865528        54.0753280166393        0.581400938121943       [3.36,8.61)     0       0       0       0       0       0       0       0       0   00       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0   00       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0   00       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0   00       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       11.956365       0       0       0.617106886477477       [8.75,21.1)     17.902283       0       0       0.669598572825032       [7.8,18)        0       0       0       0       0   00       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
 
 
+################### Input files: Correspondence_phenotype_TOME.txt
+phenotype       TOME_Cell_Type  Lineage
+rbc     EB      erythroid_lineage
+mcv     EB      erythroid_lineage
+hct     EB      erythroid_lineage
+mch     EB      erythroid_lineage
+
+################### Input files: PCHIC_ChicagoScore_graphs.csv
+VAR,HGNC,ensembl_gene_id,value,CellType_DEF
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+
+################### Input files: VEP_consequence_graphs.csv VEP consequences per gene per variant
+
+transcript_id,ensembl_gene_id,HGNC,VEP_DEF_LABELS,VAR
+ENST00000300305,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+ENST00000416754,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+
+################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
 
 
+################### Code Main points:
+
+ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
+
+VEP_CSQ_subset_with_genes<-unique(VEP_CSQ_subset[which(VEP_CSQ_subset$ensembl_gene_id != "DUMMY"),]) # Exclude VEP consequences that are not linked to genes
+
+VEP_and_PCHiC<-unique(rbind(VEP_CSQ_subset_with_genes,PCHiC_subset)) # Get a data frame with the genes linked to a variant by VEP consequences and PCHiC interactions
+
+for(i in 1:length(phenotypes_array)) # Loop per phenotype
+ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
 
 
+VEP_and_PCHiC_sel<-VEP_and_PCHiC[which(VEP_and_PCHiC$VAR%in%ALL_dB_subset_restricted_sel$VAR),] # Select all variants associated to that phenotype with VEP and/or PCHiC linked genes
+
+GENE_EXP_sel<-GENE_EXP[which(GENE_EXP$ensembl_gene_id%in%VEP_and_PCHiC_sel$ensembl_gene_id),] 
+indx.int<-c(which(colnames(GENE_EXP_sel) == "ensembl_gene_id"),grep("mean_",colnames(GENE_EXP_sel)))
+GENE_EXP_sel_subset<-unique(GENE_EXP_sel[,indx.int]) # Select gene expression data for those genes, only the mean expression parameter per cell type
+
+GENE_EXP_sel_subset.m$Cell_Type<-gsub("mean_","",GENE_EXP_sel_subset.m$Cell_Type)
+GENE_EXP_sel_subset.m$Cell_Type<-gsub("\\.","-",GENE_EXP_sel_subset.m$Cell_Type) # Obtain the Cell Type field
+
+TOME_correspondence_sel<-TOME_correspondence[which(TOME_correspondence$phenotype == phenotypes_array_sel),] # Obtain the cell types relevant for the phenotype
+
+GENE_EXP_sel_subset.m$Tag[which(GENE_EXP_sel_subset.m$Cell_Type%in%TOME_correspondence$TOME_Cell_Type)]<-"Not_relevant"
+GENE_EXP_sel_subset.m$Tag[which(GENE_EXP_sel_subset.m$Cell_Type%in%TOME_correspondence_sel$TOME_Cell_Type)]<-"Relevant" # Label the expression data in the cell type as Relevant or Not_relevant
+
+GENE_EXP_sel_subset.m_NO_NA$phenotype<-phenotypes_array_sel # Add the phenotype field
+
+GENE_EXP_sel_subset.m_NO_NA_wide<-as.data.frame(pivot_wider(GENE_EXP_sel_subset.m_NO_NA, id_cols=c("VAR","ensembl_gene_id","HGNC","phenotype"),
+                                                  names_from=Cell_Type,
+                                                  values_from=c("mean_GENE_EXP","Tag")), stringsAsFactors=F) # convert to the wide format to make the intermediate output smaller
+
+################### Output files: GENE_EXP_GLOBAL.tsv
+
+VAR     ensembl_gene_id HGNC    phenotype       mean_GENE_EXP_MK        mean_GENE_EXP_VB-CD4    mean_GENE_EXP_CB-Alt-MAC        mean_GENE_EXP_CMP       mean_GENE_EXP_VB-Mem-CD4        mean_GENE_EXP_HMP       mean_GENE_EXP_VB-B      mean_GENE_EXP_CLP       mean_GENE_EXP_EB        mean_GENE_EXP_VB-MAC    mean_GENE_EXP_VB-NK     mean_GENE_EXP_CB-NEUT   mean_GENE_EXP_GMP       mean_GENE_EXP_HSC       mean_GENE_EXP_CB-CD4    mean_GENE_EXP_VB-Inf-MAC        mean_GENE_EXP_VB-Alt-MAC        mean_GENE_EXP_VB-Eff-mem-CD8    mean_GENE_EXP_VB-Eff-mem-CD4    mean_GENE_EXP_CB-MAC    mean_GENE_EXP_CB-B      mean_GENE_EXP_MEP       mean_GENE_EXP_VB-NEUT   mean_GENE_EXP_VB-MONO   mean_GENE_EXP_CB-MONO   mean_GENE_EXP_VB-Class-switched-B       mean_GENE_EXP_VB-Mem-CD8        mean_GENE_EXP_VB-T-Reg  mean_GENE_EXP_VB-mem-B  mean_GENE_EXP_CB-NK     mean_GENE_EXP_CB-CD8    Tag_MK  Tag_VB-CD4      Tag_CB-Alt-MAC  Tag_CMP Tag_VB-Mem-CD4  Tag_HMP Tag_VB-B
+        Tag_CLP Tag_EB  Tag_VB-MAC      Tag_VB-NK       Tag_CB-NEUT     Tag_GMP Tag_HSC Tag_CB-CD4      Tag_VB-Inf-MAC  Tag_VB-Alt-MAC  Tag_VB-Eff-mem-CD8      Tag_VB-Eff-mem-CD4      Tag_CB-MAC      Tag_CB-B        Tag_MEP Tag_VB-NEUT     Tag_VB-MONO     Tag_CB-MONO     Tag_VB-Class-switched-B Tag_VB-Mem-CD8  Tag_VB-T-Reg    Tag_VB-mem-B    Tag_CB-NK       Tag_CB-CD8
+chr3_50332697_G_A       ENSG00000001617 SEMA3F  baso    0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       2.33386433333333        0       0       0       0       0       0
+       Not_relevant    Not_relevant    Not_relevant    Relevant        Not_relevant    Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Relevant        Relevant        Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant
+
+# 339_Gene_EXP.R
+
+################### Input files: GENE_EXP_GLOBAL.tsv
+
+VAR     ensembl_gene_id HGNC    phenotype       mean_GENE_EXP_MK        mean_GENE_EXP_VB-CD4    mean_GENE_EXP_CB-Alt-MAC        mean_GENE_EXP_CMP       mean_GENE_EXP_VB-Mem-CD4        mean_GENE_EXP_HMP       mean_GENE_EXP_VB-B      mean_GENE_EXP_CLP       mean_GENE_EXP_EB        mean_GENE_EXP_VB-MAC    mean_GENE_EXP_VB-NK     mean_GENE_EXP_CB-NEUT   mean_GENE_EXP_GMP       mean_GENE_EXP_HSC       mean_GENE_EXP_CB-CD4    mean_GENE_EXP_VB-Inf-MAC        mean_GENE_EXP_VB-Alt-MAC        mean_GENE_EXP_VB-Eff-mem-CD8    mean_GENE_EXP_VB-Eff-mem-CD4    mean_GENE_EXP_CB-MAC    mean_GENE_EXP_CB-B      mean_GENE_EXP_MEP       mean_GENE_EXP_VB-NEUT   mean_GENE_EXP_VB-MONO   mean_GENE_EXP_CB-MONO   mean_GENE_EXP_VB-Class-switched-B       mean_GENE_EXP_VB-Mem-CD8        mean_GENE_EXP_VB-T-Reg  mean_GENE_EXP_VB-mem-B  mean_GENE_EXP_CB-NK     mean_GENE_EXP_CB-CD8    Tag_MK  Tag_VB-CD4      Tag_CB-Alt-MAC  Tag_CMP Tag_VB-Mem-CD4  Tag_HMP Tag_VB-B
+        Tag_CLP Tag_EB  Tag_VB-MAC      Tag_VB-NK       Tag_CB-NEUT     Tag_GMP Tag_HSC Tag_CB-CD4      Tag_VB-Inf-MAC  Tag_VB-Alt-MAC  Tag_VB-Eff-mem-CD8      Tag_VB-Eff-mem-CD4      Tag_CB-MAC      Tag_CB-B        Tag_MEP Tag_VB-NEUT     Tag_VB-MONO     Tag_CB-MONO     Tag_VB-Class-switched-B Tag_VB-Mem-CD8  Tag_VB-T-Reg    Tag_VB-mem-B    Tag_CB-NK       Tag_CB-CD8
+chr3_50332697_G_A       ENSG00000001617 SEMA3F  baso    0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       2.33386433333333        0       0       0       0       0       0
+       Not_relevant    Not_relevant    Not_relevant    Relevant        Not_relevant    Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Relevant        Relevant        Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Relevant        Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant    Not_relevant
 
 
+################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
+################### Input parameters: desiR_weights=$(echo "0.1,20,1")
+
+################### Code main points First Function:
+
+GENE_EXP_pre_ranked.m<-melt(GENE_EXP_pre_ranked, id.vars=c("VAR","ensembl_gene_id","HGNC","phenotype"), value.name="value", variable.name="variable") # Go from the wide matrix to the long matrix per VAR, gene and phenotype
+
+GENE_EXP_pre_ranked.m$variable<-as.character(GENE_EXP_pre_ranked.m$variable)
+GENE_EXP_pre_ranked.m$Cell_Type<-GENE_EXP_pre_ranked.m$variable
+GENE_EXP_pre_ranked.m$Cell_Type<-gsub("mean_GENE_EXP_|Tag_","", GENE_EXP_pre_ranked.m$Cell_Type) # Obtain the Cell_Type field from the variable field
+
+GENE_EXP_pre_ranked.m$variable[grep("mean_GENE_EXP_", GENE_EXP_pre_ranked.m$variable)]<-"mean_GENE_EXP"
+GENE_EXP_pre_ranked.m$variable[grep("Tag_", GENE_EXP_pre_ranked.m$variable)]<-"Tag" # Obtain the variable field with mean and Tag
+
+GENE_EXP_pre_ranked.m_wide<-as.data.frame(pivot_wider(GENE_EXP_pre_ranked.m,
+                                                        id_cols=c("VAR","HGNC","ensembl_gene_id","phenotype","Cell_Type"),
+                                                        names_from=variable,
+                                                        values_from=value), stringsAsFactors=F) # Pivot to wider to have the mean_Gene_EXP and Tag in different columns per variant, gene, phenotype and cell type
+
+GENE_EXP_pre_ranked.m_wide.dt<-data.table(GENE_EXP_pre_ranked.m_wide, key=c("VAR","HGNC","ensembl_gene_id","Tag"))
+Aggregation_table<-as.data.frame(GENE_EXP_pre_ranked.m_wide.dt[,.(Aggregate_GENE_EXP=sum(mean_GENE_EXP),
+                                                          nCells=.N), by=key(GENE_EXP_pre_ranked.m_wide.dt)], stringsAsFactors=F) # Aggregate mean gene expression per variant, gene and Tag. Don't use phenotypes as they will be proportional to the number of cell types in the normalisation
+
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
+Aggregation_table$Aggregate_GENE_EXP_multiplied<-Aggregation_table$Aggregate_GENE_EXP*Aggregation_table$Multiplier # Introduce the Relevant / Not Relevant weights 1/0.01
+
+Aggregation_table$Aggregate_GENE_EXP_normalised<-Aggregation_table$Aggregate_GENE_EXP_multiplied/Aggregation_table$nCells # Normalise by the number of cell types relevant and not relevant
+Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_GENE_EXP_FINAL=sum(Aggregate_GENE_EXP_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F) # Get a final number per variant and gene
+
+Aggregation_table_FINAL$Aggregate_GENE_EXP_FINAL_component <- d.high(Aggregation_table_FINAL$Aggregate_GENE_EXP_FINAL, cut1=Aggregate_GENE_EXP_FINAL_LOW, cut2=Aggregate_GENE_EXP_FINAL_HIGH, scale=0.5) 
+Aggregation_table_FINAL$Overall_weight <- d.overall(Aggregation_table_FINAL$Aggregate_GENE_EXP_FINAL_component,
+                                          weights=c(Overall_Aggregate_GENE_EXP_FINAL)) # Obtain a continuous value from 0 to 1 for the Aggregate_GENE_EXP_FINAL. Values below 0.1 are flattened to 0 and above 20 are flattened to 1
+
+################### Intermediate Output files: GENE_EXP_GLOBAL_Ranked.tsv
+VAR     ensembl_gene_id HGNC    Aggregate_GENE_EXP_FINAL        Aggregate_GENE_EXP_FINAL_component      Overall_weight
+chr10_101277639_TA_T    ENSG00000120053 GOT1    6.2849340093879 0.55749502597722        0.55749502597722
 
 
+################### Code main points Second Function:
 
+GENE_EXP_ranked$mean_Overall_weight<-mean(GENE_EXP_ranked$Overall_weight, na.rm =T)
+GENE_EXP_ranked$sd_Overall_weight<-sd(GENE_EXP_ranked$Overall_weight, na.rm =T)
+GENE_EXP_ranked$Overall_weight_Z_score<-(GENE_EXP_ranked$Overall_weight-GENE_EXP_ranked$mean_Overall_weight)/GENE_EXP_ranked$sd_Overall_weight # Z spcre normalisation of the Overall_weight across all genes and variants
 
-
-
-
-
-
-
-
-
-
-
-
+################### Output files: Prepared_file_GENE_EXP.rds
+VAR     ensembl_gene_id HGNC    value   value_Z_score   variable
+chr12_111844956_C_T     ENSG00000111252 SH2B3   1       2.22500841360019        Rank_GENE_EXP
+chr12_111844956_C_T     ENSG00000257595 RP3-473L9.4     0.187394957124891       -0.354927879046733      Rank_GENE_EXP
