@@ -297,3 +297,205 @@ sd_value value_Z_score
 
 # 329_binder_of_scores_unranked_chromstates_v2.R
 
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: chrmstates_graphs.csv
+state_ordered,CellType_DEF,E_state,VAR
+E1: Transcription Low signal H3K36me3,VB-Class-switched-B,E1,chr21_36280376_A_G
+E1: Transcription Low signal H3K36me3,VB-Eff-mem-CD8,E1,chr21_36280376_A_G
+E1: Transcription Low signal H3K36me3,TON-PC,E1,chr21_36280376_A_G
+################### Input files: Weights_chromatin_states.tsv
+Criteria# 1     Chromatin states        Weight
+Active enhancer Active Enhancer High Signal H3K4me1 & H3K27Ac   1
+Active promoter Active TSS High Signal H3K4me3 & H3K27Ac        1
+Enhancer        Enhancer High Signal H3K4me1    0.1
+Promoter        Active TSS High Signal H3K4me3 & H3K4me1        0.1
+Repression states       Repressed Polycomb TSS High Signal H3K27me3 & H3K4me3 & H3K4me1 0.05
+Repression states       Repressed Polycomb High signal H3K27me3 0.05
+Repression states       Repressed Polycomb Low signal H3K27me3  0.05
+Repression states       Heterochromatin High Signal H3K9me3     0.05
+Transcription states    Transcription High signal H3K36me3      0.01
+################### Input files: CellType_Trait_table_generation.txt
+RelevantCellType        phenotype       label
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood plt     C3
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood mpv     C3
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood pdw     C3
+################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
+
+################### Pseudocode:
+
+ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
+for(i in 1:length(phenotypes_array)) # Loop per phenotype
+ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
+Trait_to_CT_table_sel<-Trait_to_CT_table[which(Trait_to_CT_table$phenotype == phenotypes_array_sel),] # Select all cell types relevant for that phenotype
+chromstates_INITIAL_sel<-chromstates_INITIAL[which(chromstates_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select all variants with chromatin state predictions associated to that phenotype
+
+chromstates_INITIAL_sel$Tag[which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
+chromstates_INITIAL_sel$Tag[-which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not relevant
+
+chromstates_INITIAL_sel<-merge(chromstates_INITIAL_sel,
+                                   matrix_weighted_regulatory_states,
+                                   by="state") # Merge the predictions with the table of weights per chromatin state
+
+chromstates_INITIAL_sel.dt<-data.table(chromstates_INITIAL_sel, key=c("VAR","Tag"))
+Aggregation_table<-as.data.frame(chromstates_INITIAL_sel.dt[,.(Aggregate_chromstates=sum(Weight),
+                                                                  nCells=.N), by=key(chromstates_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate weights per variant and Tag ('Relevant', 'Not_relevant')
+
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
+Aggregation_table$Aggregate_chromstates_multiplied<-Aggregation_table$Aggregate_chromstates*Aggregation_table$Multiplier # Multiply the aggregate weight of the chromatin states per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01)
+
+Aggregation_table$Aggregate_chromstates_normalised<-Aggregation_table$Aggregate_chromstates_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
+
+Aggregation_table.dt<-data.table(Aggregation_table, key=c("VAR"))
+Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_chromstates_FINAL=sum(Aggregate_chromstates_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
+Aggregation_table_FINAL$phenotype<-phenotypes_array_sel # Finally aggregate the Relevant and No_relevant values to one value per variant and add the phenotype field
+
+################### Output files: chromstates_GLOBAL_preranked.tsv
+VAR     Aggregate_chromstates_FINAL     phenotype
+chr10_104698523_G_A     0.0100148648648649      ret
+chr10_104701039_T_TTATAA        0.0100124324324324      ret
+
+# 337_Rank_chromstates_v2.R
+
+################### Input files: chromstates_GLOBAL_preranked.tsv
+VAR     Aggregate_chromstates_FINAL     phenotype
+chr10_104698523_G_A     0.0100148648648649      ret
+chr10_104701039_T_TTATAA        0.0100124324324324      ret
+################### Input parameters: desiR_weights=$(echo "0.001,1.2,1")
+
+################### Pseudocode First Function:
+
+chromstates_pre_ranked.dt<-data.table(chromstates_pre_ranked, key=c("VAR"))
+Aggregation_table<-as.data.frame(chromstates_pre_ranked.dt[,.(Total_Aggregate_chromstates=sum(Aggregate_chromstates_FINAL),
+                                                                 nPhenotypes=.N), by=key(chromstates_pre_ranked.dt)], stringsAsFactors=F)
+Aggregation_table$normalised_Total_Aggregate_chromstates<-Aggregation_table$Total_Aggregate_chromstates/Aggregation_table$nPhenotypes # Aggregate the Aggregate_chromstates_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
+
+Aggregation_table$normalised_Total_Aggregate_chromstates_component <- d.high(Aggregation_table$normalised_Total_Aggregate_chromstates, cut1=normalised_Total_Aggregate_chromstates_FINAL_LOW, cut2=normalised_Total_Aggregate_chromstates_FINAL_HIGH, scale=0.5)
+Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_chromstates_component,
+                                          weights=c(Overall_normalised_Total_Aggregate_chromstates_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.001 everything is flattened to 0 and above 1.2 everything is flattened to 1.
+
+################### Intermediate Output files: chromstates_GLOBAL_Ranked.tsv
+VAR     Total_Aggregate_chromstates     nPhenotypes     normalised_Total_Aggregate_chromstates  normalised_Total_Aggregate_chromstates_component        Overall_weight
+chr10_101244819_G_A     0.0004475       1       0.0004475       0       0
+
+################### Pseudocode Second Function:
+
+chromstates_ranked$mean_Overall_weight<-mean(chromstates_ranked$Overall_weight, na.rm =T)
+chromstates_ranked$sd_Overall_weight<-sd(chromstates_ranked$Overall_weight, na.rm =T)
+chromstates_ranked$Overall_weight_Z_score<-(chromstates_ranked$Overall_weight-chromstates_ranked$mean_Overall_weight)/chromstates_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+
+################### Output files: Prepared_file_chromstates.rds
+VAR     value   value_Z_score   variable
+chr12_111844956_C_T     0.915374733518353       4.58495209415341        Rank_chromstates
+chr16_86016328_C_T      0.378500238084892       1.54630294787155        Rank_chromstates
+
+# 329_binder_of_scores_unranked_but_thresholded_PCHiC_v2.R
+
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: chrmstates_graphs.csv
+state_ordered,CellType_DEF,E_state,VAR
+E1: Transcription Low signal H3K36me3,VB-Class-switched-B,E1,chr21_36280376_A_G
+E1: Transcription Low signal H3K36me3,VB-Eff-mem-CD8,E1,chr21_36280376_A_G
+E1: Transcription Low signal H3K36me3,TON-PC,E1,chr21_36280376_A_G
+################### Input files: Weights_chromatin_states.tsv
+Criteria# 1     Chromatin states        Weight
+Active enhancer Active Enhancer High Signal H3K4me1 & H3K27Ac   1
+Active promoter Active TSS High Signal H3K4me3 & H3K27Ac        1
+Enhancer        Enhancer High Signal H3K4me1    0.1
+Promoter        Active TSS High Signal H3K4me3 & H3K4me1        0.1
+Repression states       Repressed Polycomb TSS High Signal H3K27me3 & H3K4me3 & H3K4me1 0.05
+Repression states       Repressed Polycomb High signal H3K27me3 0.05
+Repression states       Repressed Polycomb Low signal H3K27me3  0.05
+Repression states       Heterochromatin High Signal H3K9me3     0.05
+Transcription states    Transcription High signal H3K36me3      0.01
+################### Input files: CellType_Trait_table_generation.txt
+RelevantCellType        phenotype       label
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood plt     C3
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood mpv     C3
+CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood pdw     C3
+################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
+
+################### Pseudocode:
+
+ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
+for(i in 1:length(phenotypes_array)) # Loop per phenotype
+ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
+Trait_to_CT_table_sel<-Trait_to_CT_table[which(Trait_to_CT_table$phenotype == phenotypes_array_sel),] # Select all cell types relevant for that phenotype
+chromstates_INITIAL_sel<-chromstates_INITIAL[which(chromstates_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select all variants with chromatin state predictions associated to that phenotype
+
+chromstates_INITIAL_sel$Tag[which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
+chromstates_INITIAL_sel$Tag[-which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not relevant
+
+chromstates_INITIAL_sel<-merge(chromstates_INITIAL_sel,
+                                   matrix_weighted_regulatory_states,
+                                   by="state") # Merge the predictions with the table of weights per chromatin state
+
+chromstates_INITIAL_sel.dt<-data.table(chromstates_INITIAL_sel, key=c("VAR","Tag"))
+Aggregation_table<-as.data.frame(chromstates_INITIAL_sel.dt[,.(Aggregate_chromstates=sum(Weight),
+                                                                  nCells=.N), by=key(chromstates_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate weights per variant and Tag ('Relevant', 'Not_relevant')
+
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
+Aggregation_table$Aggregate_chromstates_multiplied<-Aggregation_table$Aggregate_chromstates*Aggregation_table$Multiplier # Multiply the aggregate weight of the chromatin states per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01)
+
+Aggregation_table$Aggregate_chromstates_normalised<-Aggregation_table$Aggregate_chromstates_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
+
+Aggregation_table.dt<-data.table(Aggregation_table, key=c("VAR"))
+Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_chromstates_FINAL=sum(Aggregate_chromstates_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
+Aggregation_table_FINAL$phenotype<-phenotypes_array_sel # Finally aggregate the Relevant and No_relevant values to one value per variant and add the phenotype field
+
+################### Output files: chromstates_GLOBAL_preranked.tsv
+VAR     Aggregate_chromstates_FINAL     phenotype
+chr10_104698523_G_A     0.0100148648648649      ret
+chr10_104701039_T_TTATAA        0.0100124324324324      ret
+
+# 337_Rank_chromstates_v2.R
+
+################### Input files: chromstates_GLOBAL_preranked.tsv
+VAR     Aggregate_chromstates_FINAL     phenotype
+chr10_104698523_G_A     0.0100148648648649      ret
+chr10_104701039_T_TTATAA        0.0100124324324324      ret
+################### Input parameters: desiR_weights=$(echo "0.001,1.2,1")
+
+################### Pseudocode First Function:
+
+chromstates_pre_ranked.dt<-data.table(chromstates_pre_ranked, key=c("VAR"))
+Aggregation_table<-as.data.frame(chromstates_pre_ranked.dt[,.(Total_Aggregate_chromstates=sum(Aggregate_chromstates_FINAL),
+                                                                 nPhenotypes=.N), by=key(chromstates_pre_ranked.dt)], stringsAsFactors=F)
+Aggregation_table$normalised_Total_Aggregate_chromstates<-Aggregation_table$Total_Aggregate_chromstates/Aggregation_table$nPhenotypes # Aggregate the Aggregate_chromstates_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
+
+Aggregation_table$normalised_Total_Aggregate_chromstates_component <- d.high(Aggregation_table$normalised_Total_Aggregate_chromstates, cut1=normalised_Total_Aggregate_chromstates_FINAL_LOW, cut2=normalised_Total_Aggregate_chromstates_FINAL_HIGH, scale=0.5)
+Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_chromstates_component,
+                                          weights=c(Overall_normalised_Total_Aggregate_chromstates_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.001 everything is flattened to 0 and above 1.2 everything is flattened to 1.
+
+################### Intermediate Output files: chromstates_GLOBAL_Ranked.tsv
+VAR     Total_Aggregate_chromstates     nPhenotypes     normalised_Total_Aggregate_chromstates  normalised_Total_Aggregate_chromstates_component        Overall_weight
+chr10_101244819_G_A     0.0004475       1       0.0004475       0       0
+
+################### Pseudocode Second Function:
+
+chromstates_ranked$mean_Overall_weight<-mean(chromstates_ranked$Overall_weight, na.rm =T)
+chromstates_ranked$sd_Overall_weight<-sd(chromstates_ranked$Overall_weight, na.rm =T)
+chromstates_ranked$Overall_weight_Z_score<-(chromstates_ranked$Overall_weight-chromstates_ranked$mean_Overall_weight)/chromstates_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+
+################### Output files: Prepared_file_chromstates.rds
+VAR     value   value_Z_score   variable
+chr12_111844956_C_T     0.915374733518353       4.58495209415341        Rank_chromstates
+chr16_86016328_C_T      0.378500238084892       1.54630294787155        Rank_chromstates
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
