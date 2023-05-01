@@ -480,17 +480,19 @@ chr17_38764524_T_A      0.71661332492833        0.691028536045906       Rank_PCH
 # 329_binder_of_scores_unranked_ATAC_v2.R
 
 ################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
-################### Input files: $ head PCHIC_ChicagoScore_graphs.csv. Chicago Score values for PCHiC filtered to aminimum of 5 Chicago Score per PIR that overlaps the variant.
-VAR,HGNC,ensembl_gene_id,value,CellType_DEF
-chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
-chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+################### Input files: ATAC_Seq_Ranked_graphs.csv. ATAC-seq values per cell type normalised by cell type.
+VAR,BP_CELL_LABELS,LineageDEF,ATAC_Cell_Type,variable,value
+chr21_36789420_C_G,CMP,gran_mono_lineage,CMP,ATAC_value,0.235284614543108
 
+################### Input files: ATAC_scaled_trait_table_generation.txt (association lineage to blood traits)
+Trait   Factor4
+rbc     erythroid_lineage
+mcv     erythroid_lineage
 
-################### Input files: PCHIC_part_II_Javierre_corresp_generation.txt
-Trait   RelevantCellType
-mono    Mac0
-wbc     Mac0
-mono_p  Mac0
+################### Input files: ATAC_scaled_Lineage_hierarchy_generation.txt (association between cell types and lineages)
+CellType        Lineage Factor5
+HSC     mega_lineage    HSC
+MPP     mega_lineage    MPP
 
 ################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
 ################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
@@ -500,67 +502,172 @@ mono_p  Mac0
 ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
 for(i in 1:length(phenotypes_array)) # Loop per phenotype
 ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
-Trait_to_CT_table_sel<-Trait_to_CT_table[which(Trait_to_CT_table$phenotype == phenotypes_array_sel),] # Select all cell types relevant for that phenotype
 
-PCHiC_INITIAL_sel<-PCHiC_INITIAL[which(PCHiC_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select the variants with PCHiC values associated to that phenotype
+Trait_to_Lineage_table_sel<-Trait_to_Lineage_table[which(Trait_to_Lineage_table$Trait == phenotypes_array_sel),] 
+Lineage_sel<-unique(Trait_to_Lineage_table_sel$Factor4) # Select the lineage associated with that phenotype
+Lineage_to_Cell_table_sel<-Lineage_to_Cell_table[which(Lineage_to_Cell_table$Lineage%in%Trait_to_Lineage_table_sel$Factor4),] # Select all the cell types associated to that lineage
 
-PCHiC_INITIAL_sel$Tag[which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
-PCHiC_INITIAL_sel$Tag[-which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not releva
+ATAC_INITIAL_subset_sel<-ATAC_INITIAL_subset[which(ATAC_INITIAL_subset$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select all the variants associated to that phenotype
 
-PCHiC_INITIAL_sel.dt<-data.table(PCHiC_INITIAL_sel, key=c("VAR","Tag"))
-Aggregation_table<-as.data.frame(PCHiC_INITIAL_sel.dt[,.(Aggregate_PCHiC=sum(value),
-                                                                  nCells=.N), by=key(PCHiC_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate the Chicago Score value of all the interactions per variant and Tag
+ATAC_INITIAL_subset_sel$Tag[which(ATAC_INITIAL_subset_sel$ATAC_Cell_Type%in%Lineage_to_Cell_table_sel$CellType)]<-"Relevant"
+ATAC_INITIAL_subset_sel$Tag[-which(ATAC_INITIAL_subset_sel$ATAC_Cell_Type%in%Lineage_to_Cell_table_sel$CellType)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not relevant
 
-Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
-Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
-Aggregation_table$Aggregate_PCHiC_multiplied<-Aggregation_table$Aggregate_PCHiC*Aggregation_table$Multiplier # Multiply the aggregate Chicago scores per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01
+ATAC_INITIAL_subset_double_sel<-ATAC_INITIAL_subset_sel[which(ATAC_INITIAL_subset_sel$Tag == "Relevant"),] # Important,differently from the other rankings, we keep only the ATAC values of the relevant cell types for the lineage
 
-Aggregation_table$Aggregate_PCHiC_normalised<-Aggregation_table$Aggregate_PCHiC_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
+indx.int<-c(which(colnames(ATAC_INITIAL_subset_double_sel) == "VAR"),
+                which(colnames(ATAC_INITIAL_subset_double_sel) == "ATAC_Cell_Type"),
+                which(colnames(ATAC_INITIAL_subset_double_sel) == "value"))
+ATAC_INITIAL_subset_FINAL_sel<-unique(ATAC_INITIAL_subset_double_sel[,indx.int])
+ATAC_INITIAL_subset_FINAL_sel$Lineage<-Lineage_sel
+FINAL_df<-unique(rbind(FINAL_df,ATAC_INITIAL_subset_FINAL_sel)) # Important, we add the lineage field not the phnotype field and make a unique function. This means that one variant associated to two traits of the same lineage will be collapsed to just one set of unique values of ATAC seq of all the cell types relevant for that lineage
 
-Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_PCHiC_FINAL=sum(Aggregate_PCHiC_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
-Aggregation_table_FINAL$phenotype<-phenotypes_array_sel # Finally aggregate the Relevant and No_relevant values to one value per variant and add the phenotype field
+FINAL_df_NO_NA<-FINAL_df[!is.na(FINAL_df$value),] # Exclude NA's
 
-FINAL_df_NO_NA<-FINAL_df[!is.na(FINAL_df$Aggregate_PCHiC_FINAL),] # Exclude NA's
+################### Output files: ATAC_GLOBAL_preranked.tsv
 
-################### Output files: PCHiC_GLOBAL_preranked.tsv
-VAR     Aggregate_PCHiC_FINAL   phenotype
-chr10_104698523_G_A     0.0607758101027744      ret
-chr10_104701039_T_TTATAA        0.0607758101027744      ret
+chr1_202129205_G_A      CMP     0.305548373494111       erythroid_lineage
+chr1_202129205_G_A      HSC     0.280952138034825       erythroid_lineage
+chr1_202129205_G_A      MPP     0.293918507628686       erythroid_lineage
+chr1_202129205_G_A      Ery     0.28599250535214        erythroid_lineage
+chr1_202129205_G_A      MEP     0.329119986078948       erythroid_lineage
+chr1_202129205_G_A      CMP     0.305548373494111       mega_lineage
+chr1_202129205_G_A      HSC     0.280952138034825       mega_lineage
+chr1_202129205_G_A      MPP     0.293918507628686       mega_lineage
+chr1_202129205_G_A      MEP     0.329119986078948       mega_lineage
+chr1_202129205_G_A      Mega    0.394347811595599       mega_lineage
 
-# 336_Rank_PCHiC_v2.R
 
-################### Input files: PCHiC_GLOBAL_preranked.tsv
-VAR     Aggregate_PCHiC_FINAL   phenotype
-chr10_104698523_G_A     0.0607758101027744      ret
-chr10_104701039_T_TTATAA        0.0607758101027744      ret
+# 330_Rank_ATAC_v2.R
 
-################### Input parameters: desiR_weights=$(echo "0.1,10,1")
+################### Input files: ATAC_GLOBAL_preranked.tsv
+
+chr1_202129205_G_A      CMP     0.305548373494111       erythroid_lineage
+chr1_202129205_G_A      HSC     0.280952138034825       erythroid_lineage
+chr1_202129205_G_A      MPP     0.293918507628686       erythroid_lineage
+chr1_202129205_G_A      Ery     0.28599250535214        erythroid_lineage
+chr1_202129205_G_A      MEP     0.329119986078948       erythroid_lineage
+chr1_202129205_G_A      CMP     0.305548373494111       mega_lineage
+chr1_202129205_G_A      HSC     0.280952138034825       mega_lineage
+chr1_202129205_G_A      MPP     0.293918507628686       mega_lineage
+chr1_202129205_G_A      MEP     0.329119986078948       mega_lineage
+chr1_202129205_G_A      Mega    0.394347811595599       mega_lineage
+
+
+################### Input parameters: Open_in_CT_threshold=$(echo "0.1")
+################### Input parameters: desiR_weights=$(echo "0.5,5,0.05,0.8,1,3")
 
 ################### Code main points First Function:
 
-PCHiC_pre_ranked.dt<-data.table(PCHiC_pre_ranked, key=c("VAR"))
-Aggregation_table<-as.data.frame(PCHiC_pre_ranked.dt[,.(Total_Aggregate_PCHiC=sum(Aggregate_PCHiC_FINAL),
-                                                                nPhenotypes=.N), by=key(PCHiC_pre_ranked.dt)], stringsAsFactors=F)
-Aggregation_table$normalised_Total_Aggregate_PCHiC<-Aggregation_table$Total_Aggregate_PCHiC/Aggregation_table$nPhenotypes # Aggregate the Aggregate_PCHiC_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
+ATAC_pre_ranked$Lineage[which(ATAC_pre_ranked$Lineage == 'lymph_lineage.CD4')]<-"lymph_lineage"
+ATAC_pre_ranked$Lineage[which(ATAC_pre_ranked$Lineage == 'lymph_lineage.CD8')]<-"lymph_lineage"
+ATAC_pre_ranked$Lineage[which(ATAC_pre_ranked$Lineage == 'lymph_lineage.B')]<-"lymph_lineage"
+ATAC_pre_ranked$Lineage[which(ATAC_pre_ranked$Lineage == 'lymph_lineage.NK')]<-"lymph_lineage" # Convert all lymph sublineages to lymph_lineage
 
-Aggregation_table$normalised_Total_Aggregate_PCHiC_component <- d.high(Aggregation_table$normalised_Total_Aggregate_PCHiC, cut1=normalised_Total_Aggregate_PCHiC_FINAL_LOW, cut2=normalised_Total_Aggregate_PCHiC_FINAL_HIGH, scale=0.5)
-Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_PCHiC_component,
-                                          weights=c(Overall_normalised_Total_Aggregate_PCHiC_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.1 everything is flattened to 0 and above 10 everything is flattened to 1.
+ATAC_pre_ranked_unified_lymph_Thresholded<-ATAC_pre_ranked_unified_lymph[which(ATAC_pre_ranked_unified_lymph$value >= Open_in_CT_threshold),]
+ATAC_pre_ranked_unified_lymph_Thresholded.dt<-data.table(ATAC_pre_ranked_unified_lymph_Thresholded, key=c("VAR","Lineage"))
+Freq_table<-as.data.frame(ATAC_pre_ranked_unified_lymph_Thresholded.dt[,.(nCells=.N), by=key(ATAC_pre_ranked_unified_lymph_Thresholded.dt)], stringsAsFactors=F) # Use a Threshold of 0.1 of scaled signal to filter all the cells per variant and lineage above that value and count how many they are
 
-################### Intermediate Output files: PCHiC_GLOBAL_Ranked.tsv
-VAR     Total_Aggregate_PCHiC   nPhenotypes     normalised_Total_Aggregate_PCHiC        normalised_Total_Aggregate_PCHiC_component      Overall_weight
-chr10_101277639_TA_T    0.12268012554431        1       0.12268012554431        0.0478635745860307      0.0478635745860307
+
+ATAC_pre_ranked_unified_lymph.dt<-data.table(ATAC_pre_ranked_unified_lymph, key=c("VAR","Lineage"))
+MAX_table<-as.data.frame(ATAC_pre_ranked_unified_lymph.dt[,.SD[which.max(value)], by=key(ATAC_pre_ranked_unified_lymph.dt)], stringsAsFactors=F) # Separately get the maximum ATAC seq signal per variant and phenotype
+
+Merge_table<-merge(Freq_table,
+                     MAX_table,
+                     by=c("VAR","Lineage"),
+                    all=T)
+Merge_table$nCells[is.na(Merge_table$nCells)]<-0 # Merge both tables and make 0 the values for variants that don;t have any cell type above the threshold for a given lineage
+
+Merge_table$nCells_weight <- d.high(Merge_table$nCells, cut1=nCells_LOW, cut2=nCells_HIGH, scale=0.5) # Calculate a continuous value for the number of cells per lineage above the threshold. Values above 5 are flattened to 1
+Merge_table$ATAC_value_weight <- d.high(Merge_table$value, cut1=ATAC_value_LOW, cut2=ATAC_value_HIGH, scale=0.5) # Calculate a continuous value for the maximum ATAC signal per variant and lineage. Values below 0.05 are flattened to 0 and above 0.8 are flattened to 1.
+
+Merge_table$Overall_weight <- d.overall(Merge_table$nCells_weight, Merge_table$ATAC_value_weight,
+                                          weights=c(Overall_nCells,Overall_ATAC_value)) # With the previous two calculate a composite measure giving a relative weight of 1 to the Overall_nCells and of 3 to the Overall_ATAC_value
+
+################### Intermediate Output files: ATAC_GLOBAL_Ranked.tsv
+VAR     Lineage nCells  ATAC_Cell_Type  value   nCells_weight   ATAC_value_weight       Overall_weight
+chr10_101245230_T_C     mega_lineage    1       HSC     0.100621412475289       0.333333333333333       0.259798415379537       0.276501224964101
+chr10_101248979_A_G     erythroid_lineage       5       HSC     0.536134835602244       1       0.805096131404811       0.849935178410447
+chr10_101248979_A_G     mega_lineage    4       HSC     0.536134835602244       0.881917103688197       0.805096131404811       0.823650082327669
+
 
 ################### Code main points Second Function:
 
-PCHiC_ranked$mean_Overall_weight<-mean(PCHiC_ranked$Overall_weight, na.rm =T)
-PCHiC_ranked$sd_Overall_weight<-sd(PCHiC_ranked$Overall_weight, na.rm =T)
-PCHiC_ranked$Overall_weight_Z_score<-(PCHiC_ranked$Overall_weight-PCHiC_ranked$mean_Overall_weight)/PCHiC_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+ATAC_ranked.dt<-data.table(ATAC_ranked, key=c("Lineage"))
+ATAC_ranked_Lineage_parameters<-as.data.frame(ATAC_ranked.dt[,.(mean_Overall_weight=mean(Overall_weight, na.rm =T),
+                                                                  sd_Overall_weight=sd(Overall_weight, na.rm =T)),
+                                                               by=key(ATAC_ranked.dt)], stringsAsFactors=F)
+ATAC_ranked<-merge(ATAC_ranked,
+                     ATAC_ranked_Lineage_parameters,
+                     by=c("Lineage"))
+ATAC_ranked$Overall_weight_Z_score<-(ATAC_ranked$Overall_weight-ATAC_ranked$mean_Overall_weight)/ATAC_ranked$sd_Overall_weight # Z-score normalisation per Lineage
 
-################### Output files: Prepared_file_PCHiC.rds
+
+colnames(ATAC_ranked_subset)[which(colnames(ATAC_ranked_subset) == "Lineage")]<-"variable"
+colnames(ATAC_ranked_subset)[which(colnames(ATAC_ranked_subset) == "Overall_weight")]<-"value"
+colnames(ATAC_ranked_subset)[which(colnames(ATAC_ranked_subset) == "Overall_weight_Z_score")]<-"value_Z_score"
+ATAC_ranked_subset$variable<-paste('Rank_ATAC_',ATAC_ranked_subset$variable, sep='') # Subset columns and create the variable Rank_ATAC_ per lineage
+
+
+################### Output files: Prepared_file_ATAC.rds
+
+VAR     variable        value   value_Z_score
+chr1_202129205_G_A      Rank_ATAC_erythroid_lineage     0.690277355735851       0.795936299393506
+chr1_202129205_G_A      Rank_ATAC_mega_lineage  0.74683734086938        0.999126381544563
+
+# 331_Rank_multi_lineage_ATAC.R
+
+################### Input files: ATAC_GLOBAL_Ranked.tsv
+VAR     Lineage nCells  ATAC_Cell_Type  value   nCells_weight   ATAC_value_weight       Overall_weight
+chr10_101245230_T_C     mega_lineage    1       HSC     0.100621412475289       0.333333333333333       0.259798415379537       0.276501224964101
+chr10_101248979_A_G     erythroid_lineage       5       HSC     0.536134835602244       1       0.805096131404811       0.849935178410447
+chr10_101248979_A_G     mega_lineage    4       HSC     0.536134835602244       0.881917103688197       0.805096131404811       0.823650082327669
+################### Input parameters: desiR_weights=$(echo "0.9,2.5,0.1,0.7,3,1")
+
+################### Code main points First Function:
+
+multi_ATAC_ranked.dt<-data.table(multi_ATAC_ranked, key="VAR")
+Freq_table<-as.data.frame(multi_ATAC_ranked.dt[,.(nLineages=.N), by=key(multi_ATAC_ranked.dt)], stringsAsFactors=F) # Get a table of how many lineages are associated to every variant with ATAC seq signal
+
+multi_ATAC_ranked.dt<-data.table(multi_ATAC_ranked, key="VAR")
+mean_table<-as.data.frame(multi_ATAC_ranked.dt[,.(mean_Rank_ATAC=mean(Overall_weight)), by=key(multi_ATAC_ranked.dt)], stringsAsFactors=F) # Get a table of what's the mean Overall_weight as calculated in the script 330_Rank_ATAC_v2.R. It is a mean of the ATAC ranking across lineages for the same variant.
+
+Merge_table<-merge(Freq_table,
+                     mean_table,
+                     by="VAR",
+                     all=T)# Merge both tables
+
+Merge_table$nLineages_weight <- d.high(Merge_table$nLineages, cut1=nLineages_LOW, cut2=nLineages_HIGH, scale=0.5) # Give a continuous value between 0 to 1 to the number of lineages per variant. Values above 2 are flattened to 1.
+
+Merge_table$mean_Rank_ATAC_weight <- d.high(Merge_table$mean_Rank_ATAC, cut1=mean_Rank_ATAC_LOW, cut2=mean_Rank_ATAC_HIGH, scale=0.5) # Give a continuous value between 0 to 1 to the mean_Rank_ATAC across lineages for the same variant. Values below 0.1 are flattened to 0 and above 0.7 are flattened to 1.
+
+Merge_table$Overall_weight <- d.overall(Merge_table$nLineages_weight, Merge_table$mean_Rank_ATAC_weight,
+                                          weights=c(Overall_nLineages,Overall_mean_Rank_ATAC))  # With the previous two calculate a composite measure giving a relative weight of 3 to the nLineages_weight and of 1 to the Overall_mean_Rank_ATAC
+
+################### Intermediate Output files: multi_ATAC_GLOBAL_Ranked.tsv
+
+VAR     nLineages       mean_Rank_ATAC  nLineages_weight        mean_Rank_ATAC_weight   Overall_weight
+chr10_101245230_T_C     1       0.276501224964101       0.25    0.542373218617496       0.303409773098511
+chr10_101248979_A_G     2       0.836792630369058       0.82915619758885        1       0.868914937906556
+
+
+
+################### Code main points Second Function:
+
+multi_ATAC_ranked$mean_Overall_weight<-mean(multi_ATAC_ranked$Overall_weight, na.rm =T)
+multi_ATAC_ranked$sd_Overall_weight<-sd(multi_ATAC_ranked$Overall_weight, na.rm =T)
+multi_ATAC_ranked$Overall_weight_Z_score<-(multi_ATAC_ranked$Overall_weight-multi_ATAC_ranked$mean_Overall_weight)/multi_ATAC_ranked$sd_Overall_weight # Z-score normalisation
+
+indx.int<-c(which(colnames(multi_ATAC_ranked) == "VAR"),which(colnames(multi_ATAC_ranked) == "Overall_weight"),which(colnames(multi_ATAC_ranked) == "Overall_weight_Z_score"))
+multi_ATAC_ranked_subset<-unique(multi_ATAC_ranked[,indx.int])
+colnames(multi_ATAC_ranked_subset)[which(colnames(multi_ATAC_ranked_subset) == "Overall_weight")]<-"value"
+colnames(multi_ATAC_ranked_subset)[which(colnames(multi_ATAC_ranked_subset) == "Overall_weight_Z_score")]<-"value_Z_score"
+multi_ATAC_ranked_subset$variable<-"multi_lineage_ATAC" # Subset columns and create the variable multi_lineage_ATAC
+
+################### Output files: Prepared_file_multi_lineage_ATAC.rds
+
 VAR     value   value_Z_score   variable
-chr16_86016328_C_T      0.724737400667775       0.710225805378219       Rank_PCHiC
-chr17_38764524_T_A      0.71661332492833        0.691028536045906       Rank_PCHiC
+chr1_202129205_G_A      0.868914937906556       2.33058889131214        multi_lineage_ATAC
+chr12_111844956_C_T     0.353553390593274       -0.114069886812755      multi_lineage_ATAC
 
 
 
