@@ -211,26 +211,89 @@ chr10_101797412_A_G 1.7518822     1.7518822 Constraint_Z
 # Subscript: 344_binder_SpliceAI.R
 
 ################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
-################### Input files: haemvar_manuel_200903_NCBOOST.tsv (annotation of NCBoost results)
+################### Input files: haemvar_manuel_200903_spliceAI_output_fixed.vcf (annotation of SpliceAI results, SpliceAIv1.3.1)
 
-$ head /lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NCBoost/haemvar_manuel_200903_NCBOOST.tsv
-chr     pos     ref     alt     annovar_annotation      closest_gene_name       gene_type       pLI     familyMemberCount       ncRVIS  ncGERP  RVIS_percentile slr_dnds        GDI     gene_age        UTR3    UTR5    downstream      intergenic      intronic        upstream        GC      CpG     priPhCons       mamPhCons    verPhCons       priPhyloP       mamPhyloP       verPhyloP       GerpN   GerpS   bStatistic      TajimasD_YRI_pvalue     TajimasD_CEU_pvalue     TajimasD_CHB_pvalue     FuLisD_YRI_pvalue       FuLisD_CEU_pvalue       FuLisD_CHB_pvalue       FuLisF_YRI_pvalue       FuLisF_CEU_pvalue       FuLisF_CHB_pvalue   meanDaf1000G     meanHet1000G    meanMAF1000G    meanMAFGnomAD   meanMAF_AFRGnomAD       meanMAF_AMRGnomAD       meanMAF_ASJGnomAD       meanMAF_EASGnomAD       meanMAF_FINGnomAD       meanMAF_NFEGnomAD       meanMAF_OTHGnomAD       CDTS    NCBoost
-1       1689164 C       T       intronic        NADK    protein_coding  0.003878536     0       -0.3783625      -0.7206092      45.35858        0.06153 176.4511        0       0       0       0       0       1       0       0.6     0.04    0.028   0.008   0.026   0.457   1.003   1.317   1.86    1.86    662     1.023368     0.1377089       0.08570405      1.024593        0.5245587       0.8809586       1.149016        0.3383352       0.4969653       0.1478  0.01082257      0.00159 0.000709        0.00159 0.000294        0.000432        0.000645        0.000452        0.000302        0.000347        -0.126957       0.06201531
-1
+##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3.1 variant annotation. These include delta scores (DS) and delta positions (DP) for acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+1       11249132        .       G       C       .       .       SpliceAI=C|MTOR|0.00|0.00|0.00|0.00|12|41|-21|41
+1       11252716        .       T       C       .       .       SpliceAI=C|MTOR|0.00|0.00|0.00|0.00|46|-15|-26|9,C|ANGPTL7|0.00|0.00|0.00|0.00|-6|13|21|-38
+
+################### Input files: Homo_sapiens.GRCh37.87_GENES_table.txt (ensembl_gene_id equivalence release 87 ENSEMBL)
+
+$ head /nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_GENES_table.txt
+chr1    11869   14412   ENSG00000223972 DDX11L1
 
 ################### Pseudocode:
 
-  NCBoost_result$VAR<-paste(paste('chr',NCBoost_result$chr, sep=''),NCBoost_result$pos,NCBoost_result$ref,NCBoost_result$alt,sep="_")
- Merge_table<-merge(ALL_dB_subset,
-                     NCBoost_result,
-                     by=c("VAR")) # Merge NCBoost result with GWAS results and keep the overlap
+SpliceAI_result$VAR<-paste(paste('chr',SpliceAI_result$CHROM,sep=''),SpliceAI_result$POS,SpliceAI_result$REF,SpliceAI_result$ALT, sep="_")
+row.with.results<-grep('SpliceAI',SpliceAI_result$INFO)
+SpliceAI_result_subset<-SpliceAI_result[row.with.results,] # Add VAR field to SpliceAI results and select the rows in the vcf with SpliceAI predictions
 
-Merge_table_subset_NO_NA<-Merge_table_subset[!is.na(Merge_table_subset$NCBoost),] # exclude NA's
+Merge_table<-merge(ALL_dB_subset,
+                     SpliceAI_result_subset,
+                     by=c("VAR")) # Merge with the variants dataset
+
+Merge_table_separated_LONG<-unique(as.data.frame(cSplit(Merge_table, splitCols = "INFO",
+                                        sep = ",", direction = "long", drop = F),stringsAsFactors=F)) # Split long by ',' to separate in different rows with the same variant Splice AI predictions in two different genes
+Merge_table_separated_WIDE<-unique(as.data.frame(cSplit(Merge_table_separated_LONG, splitCols = "INFO",
+                                                          sep = "|", direction = "wide", drop = F),stringsAsFactors=F)) # Split wide by '|' to separate in different columns all the fields of an Splice AI prediction in a gene
+
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_01")]<-"ALLELE"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_02")]<-"HGNC"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_03")]<-"SpliceAI_AG"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_04")]<-"SpliceAI_AL"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_05")]<-"SpliceAI_DG"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_06")]<-"SpliceAI_DL"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_07")]<-"SpliceAI_AG_Pos"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_08")]<-"SpliceAI_AL_Pos"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_09")]<-"SpliceAI_DG_Pos"
+  colnames(Merge_table_separated_WIDE)[which(colnames(Merge_table_separated_WIDE) == "INFO_10")]<-"SpliceAI_DL_Pos" # Name the columns with the appropriate field names
+
+################### Output files:
+
+$ head SpliceAI_GLOBAL.tsv
+HGNC    VAR     SpliceAI_AG     SpliceAI_AL     SpliceAI_DG     SpliceAI_DL     SpliceAI_AG_Pos SpliceAI_AL_Pos SpliceAI_DG_Pos SpliceAI_DL_Pos ensembl_gene_id
+A3GALT2 chr1_33777524_T_C       0.00    0.06    0.00    0.00    -1      -24     -3      -24     ENSG00000184389
+
+# Subscript: 345_SpliceAI.R
+
+################### Input files: SpliceAI_GLOBAL.tsv
+HGNC    VAR     SpliceAI_AG     SpliceAI_AL     SpliceAI_DG     SpliceAI_DL     SpliceAI_AG_Pos SpliceAI_AL_Pos SpliceAI_DG_Pos SpliceAI_DL_Pos ensembl_gene_id
+A3GALT2 chr1_33777524_T_C       0.00    0.06    0.00    0.00    -1      -24     -3      -24     ENSG00000184389
+
+
+################### Pseudocode:
+
+indx.keep<-c(which(colnames(SpliceAI) == "VAR"),which(colnames(SpliceAI) == "ensembl_gene_id"),which(colnames(SpliceAI) == "HGNC"))
+SpliceAI.m<-melt(SpliceAI, id.vars=colnames(SpliceAI)[indx.keep], variable.name="variable", value.name="value")
+SpliceAI.m$value<-as.numeric(SpliceAI.m$value)
+indx.dep<-grep("_Pos",SpliceAI.m$variable)
+SpliceAI.m_subset<-droplevels(SpliceAI.m[-indx.dep,]) # Melt SpliceAI data frame and select the variables SpliceAI_AG SpliceAI_AL SpliceAI_DG SpliceAI_DL
+
+SpliceAI.m_subset_NO_NA<-SpliceAI.m_subset[!is.na(SpliceAI.m_subset$value),] # Exclude NA's
+
+SpliceAI.m_subset_NO_NA.dt<-data.table(SpliceAI.m_subset_NO_NA, key=c("variable"))
+SpliceAI.m_subset_NO_NA_SpliceAI_Type_parameters<-as.data.frame(SpliceAI.m_subset_NO_NA.dt[,.(mean_value=mean(value, na.rm =T),
+                                                                  sd_value=sd(value, na.rm =T)),by=key(SpliceAI.m_subset_NO_NA.dt)], stringsAsFactors=F)
+SpliceAI.m_subset_NO_NA<-merge(SpliceAI.m_subset_NO_NA,
+                     SpliceAI.m_subset_NO_NA_SpliceAI_Type_parameters,
+                     by=c("variable"))							       
+SpliceAI.m_subset_NO_NA$value_Z_score<-(SpliceAI.m_subset_NO_NA$value-SpliceAI.m_subset_NO_NA$mean_value)/SpliceAI.m_subset_NO_NA$sd_value # Z score normalisation per variable
 
 
 ################### Output files:
 
-$ head NCBoost_GLOBAL.tsv
-VAR     closest_gene_name       NCBoost
-chr10_101222300_G_A     GOT1    0.015575
+$ Prepared_file_SpliceAI.rds
+variable               VAR ensembl_gene_id    HGNC value  mean_value
+SpliceAI_AG chr1_33777524_T_C ENSG00000184389 A3GALT2  0.00 0.001449955 
+SpliceAI_AL chr1_33777524_T_C ENSG00000184389 A3GALT2  0.06 0.001397634
+SpliceAI_DG chr1_33777524_T_C ENSG00000184389 A3GALT2  0.00 0.001639763
+SpliceAI_DL chr1_33777524_T_C ENSG00000184389 A3GALT2  0.00 0.001467607
+sd_value value_Z_score
+0.01418904   -0.10218832
+0.01487098    3.94072031
+0.01925533   -0.08515894
+0.01753616   -0.08369034
+
+# 329_binder_of_scores_unranked_chromstates_v2.R
 
