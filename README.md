@@ -17,7 +17,7 @@ $ head /lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_table
 VAR     variant_id      rs      chr     pos37   ref     alt     maf_origin      block_no        phenotype       ncondind        credset_size    finemap_beta    finemap_se      finemap_z       finemap_prob    finemap_log10bf info    is_cond_ind     chromstates
 chr1_1689164_C_T        4154    rs2235536       chr1    1689164 C       T       0.425205        1       ret     1       107     0.0131952       0.00215928      6.11093 0.00330496      1.44972 0.996973        0       E2C1:E2C3:E2C5:E2C6:E2C7:E2C8:E2C9:E2C10:E2C11:E2C12:E9C14:E2C15:E2C16:E2C17:E9C18:E2C19:E2C20:E2C21:E2C22:E2C23:E2C24:E2C25:E2C26:E2C27:E2C28:E2C29:E2C30:E2C31:E2C32:E2C33:E2C34:E2C35:E2C36:E2C37:E2C38:E2C39
 
-################### Pseudocode:
+################### Code Main points:
 
   colnames(ALL_dB)[which(colnames(ALL_dB) == "finemap_prob")]<-"PP" # change name to PP (Posterior Probability)
   colnames(ALL_dB)[which(colnames(ALL_dB) == "maf_origin")]<-"MAF" # change name to MAF (Minimum Allele Frequency)
@@ -64,7 +64,7 @@ $ zcat /lustre/scratch123/hgi/teams/soranzo/projects/ALL_dB/csv_files/Vuckovic_V
 "variant_id","label","chr","pos","allele","cadd_phred","cadd_raw","conservation"
 1,"rs35254660","1",1442413,"T",0.791,-0.185485,""
 
-################### Pseudocode:
+################### Code Main points:
 
      Merge_table<-merge(ALL_dB_subset,
 			 CADD_result,
@@ -86,7 +86,7 @@ $ head CADD_GLOBAL.tsv
     chr10_101237412_T_C     3.693   0.066067
 
 
-################### Pseudocode:
+################### Code Main points:
 
  CADD$mean_CADD<-mean(CADD$cadd_raw, na.rm =T)
   CADD$sd_CADD<-sd(CADD$cadd_raw, na.rm =T)
@@ -109,7 +109,7 @@ chr     pos     ref     alt     annovar_annotation      closest_gene_name       
 1       1689164 C       T       intronic        NADK    protein_coding  0.003878536     0       -0.3783625      -0.7206092      45.35858        0.06153 176.4511        0       0       0       0       0       1       0       0.6     0.04    0.028   0.008   0.026   0.457   1.003   1.317   1.86    1.86    662     1.023368     0.1377089       0.08570405      1.024593        0.5245587       0.8809586       1.149016        0.3383352       0.4969653       0.1478  0.01082257      0.00159 0.000709        0.00159 0.000294        0.000432        0.000645        0.000452        0.000302        0.000347        -0.126957       0.06201531
 1
 
-################### Pseudocode:
+################### Code Main points:
 
   NCBoost_result$VAR<-paste(paste('chr',NCBoost_result$chr, sep=''),NCBoost_result$pos,NCBoost_result$ref,NCBoost_result$alt,sep="_")
  Merge_table<-merge(ALL_dB_subset,
@@ -131,7 +131,7 @@ chr10_101222300_G_A     GOT1    0.015575
 VAR     closest_gene_name       NCBoost
 chr10_101222300_G_A     GOT1    0.015575
 
-################### Pseudocode:
+################### Code Main points:
 
   NCBoost$mean_NCBoost<-mean(NCBoost$NCBoost, na.rm =T)
   NCBoost$sd_NCBoost<-sd(NCBoost$NCBoost, na.rm =T)
@@ -157,7 +157,7 @@ chr12_111844956_C_T     0.7309633       9.18665236911807        NCBoost
 chrom   start   end     element_id      possible        expected        observed        oe      z
 chr1    783000  784000  chr1-783000-784000      2443.0  159.09212499779832      142.0   0.8925646068400002      1.3551011656250318
 
-################### Pseudocode:
+################### Code Main points:
 
 VAR_df<-unique(data.frame(chr=ALL_dB_subset$chr,
                             pos37=ALL_dB_subset$pos37,
@@ -223,7 +223,7 @@ chr10_101797412_A_G 1.7518822     1.7518822 Constraint_Z
 $ head /nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_GENES_table.txt
 chr1    11869   14412   ENSG00000223972 DDX11L1
 
-################### Pseudocode:
+################### Code Main points:
 
 SpliceAI_result$VAR<-paste(paste('chr',SpliceAI_result$CHROM,sep=''),SpliceAI_result$POS,SpliceAI_result$REF,SpliceAI_result$ALT, sep="_")
 row.with.results<-grep('SpliceAI',SpliceAI_result$INFO)
@@ -262,7 +262,7 @@ HGNC    VAR     SpliceAI_AG     SpliceAI_AL     SpliceAI_DG     SpliceAI_DL     
 A3GALT2 chr1_33777524_T_C       0.00    0.06    0.00    0.00    -1      -24     -3      -24     ENSG00000184389
 
 
-################### Pseudocode:
+################### Code Main points:
 
 indx.keep<-c(which(colnames(SpliceAI) == "VAR"),which(colnames(SpliceAI) == "ensembl_gene_id"),which(colnames(SpliceAI) == "HGNC"))
 SpliceAI.m<-melt(SpliceAI, id.vars=colnames(SpliceAI)[indx.keep], variable.name="variable", value.name="value")
@@ -322,7 +322,7 @@ CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood pdw     
 ################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
 ################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
 
-################### Pseudocode:
+################### Code Main points:
 
 ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
 for(i in 1:length(phenotypes_array)) # Loop per phenotype
@@ -364,7 +364,7 @@ chr10_104698523_G_A     0.0100148648648649      ret
 chr10_104701039_T_TTATAA        0.0100124324324324      ret
 ################### Input parameters: desiR_weights=$(echo "0.001,1.2,1")
 
-################### Pseudocode First Function:
+################### Code main points First Function:
 
 chromstates_pre_ranked.dt<-data.table(chromstates_pre_ranked, key=c("VAR"))
 Aggregation_table<-as.data.frame(chromstates_pre_ranked.dt[,.(Total_Aggregate_chromstates=sum(Aggregate_chromstates_FINAL),
@@ -379,7 +379,7 @@ Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total
 VAR     Total_Aggregate_chromstates     nPhenotypes     normalised_Total_Aggregate_chromstates  normalised_Total_Aggregate_chromstates_component        Overall_weight
 chr10_101244819_G_A     0.0004475       1       0.0004475       0       0
 
-################### Pseudocode Second Function:
+################### Code main points Second Function:
 
 chromstates_ranked$mean_Overall_weight<-mean(chromstates_ranked$Overall_weight, na.rm =T)
 chromstates_ranked$sd_Overall_weight<-sd(chromstates_ranked$Overall_weight, na.rm =T)
@@ -393,97 +393,184 @@ chr16_86016328_C_T      0.378500238084892       1.54630294787155        Rank_chr
 # 329_binder_of_scores_unranked_but_thresholded_PCHiC_v2.R
 
 ################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
-################### Input files: chrmstates_graphs.csv
-state_ordered,CellType_DEF,E_state,VAR
-E1: Transcription Low signal H3K36me3,VB-Class-switched-B,E1,chr21_36280376_A_G
-E1: Transcription Low signal H3K36me3,VB-Eff-mem-CD8,E1,chr21_36280376_A_G
-E1: Transcription Low signal H3K36me3,TON-PC,E1,chr21_36280376_A_G
-################### Input files: Weights_chromatin_states.tsv
-Criteria# 1     Chromatin states        Weight
-Active enhancer Active Enhancer High Signal H3K4me1 & H3K27Ac   1
-Active promoter Active TSS High Signal H3K4me3 & H3K27Ac        1
-Enhancer        Enhancer High Signal H3K4me1    0.1
-Promoter        Active TSS High Signal H3K4me3 & H3K4me1        0.1
-Repression states       Repressed Polycomb TSS High Signal H3K27me3 & H3K4me3 & H3K4me1 0.05
-Repression states       Repressed Polycomb High signal H3K27me3 0.05
-Repression states       Repressed Polycomb Low signal H3K27me3  0.05
-Repression states       Heterochromatin High Signal H3K9me3     0.05
-Transcription states    Transcription High signal H3K36me3      0.01
-################### Input files: CellType_Trait_table_generation.txt
-RelevantCellType        phenotype       label
-CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood plt     C3
-CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood mpv     C3
-CD34-negative.CD41-positive.CD42-positive.megakaryocyte.cell_cord.blood pdw     C3
+################### Input files: $ head PCHIC_ChicagoScore_graphs.csv. Chicago Score values for PCHiC filtered to aminimum of 5 Chicago Score per PIR that overlaps the variant.
+VAR,HGNC,ensembl_gene_id,value,CellType_DEF
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+
+
+################### Input files: PCHIC_part_II_Javierre_corresp_generation.txt
+Trait   RelevantCellType
+mono    Mac0
+wbc     Mac0
+mono_p  Mac0
+
 ################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
 ################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
 
-################### Pseudocode:
+################### Code Main points:
 
 ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
 for(i in 1:length(phenotypes_array)) # Loop per phenotype
 ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
 Trait_to_CT_table_sel<-Trait_to_CT_table[which(Trait_to_CT_table$phenotype == phenotypes_array_sel),] # Select all cell types relevant for that phenotype
-chromstates_INITIAL_sel<-chromstates_INITIAL[which(chromstates_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select all variants with chromatin state predictions associated to that phenotype
 
-chromstates_INITIAL_sel$Tag[which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
-chromstates_INITIAL_sel$Tag[-which(chromstates_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not relevant
+PCHiC_INITIAL_sel<-PCHiC_INITIAL[which(PCHiC_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select the variants with PCHiC values associated to that phenotype
 
-chromstates_INITIAL_sel<-merge(chromstates_INITIAL_sel,
-                                   matrix_weighted_regulatory_states,
-                                   by="state") # Merge the predictions with the table of weights per chromatin state
+PCHiC_INITIAL_sel$Tag[which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
+PCHiC_INITIAL_sel$Tag[-which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not releva
 
-chromstates_INITIAL_sel.dt<-data.table(chromstates_INITIAL_sel, key=c("VAR","Tag"))
-Aggregation_table<-as.data.frame(chromstates_INITIAL_sel.dt[,.(Aggregate_chromstates=sum(Weight),
-                                                                  nCells=.N), by=key(chromstates_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate weights per variant and Tag ('Relevant', 'Not_relevant')
+PCHiC_INITIAL_sel.dt<-data.table(PCHiC_INITIAL_sel, key=c("VAR","Tag"))
+Aggregation_table<-as.data.frame(PCHiC_INITIAL_sel.dt[,.(Aggregate_PCHiC=sum(value),
+                                                                  nCells=.N), by=key(PCHiC_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate the Chicago Score value of all the interactions per variant and Tag
 
 Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
 Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
-Aggregation_table$Aggregate_chromstates_multiplied<-Aggregation_table$Aggregate_chromstates*Aggregation_table$Multiplier # Multiply the aggregate weight of the chromatin states per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01)
+Aggregation_table$Aggregate_PCHiC_multiplied<-Aggregation_table$Aggregate_PCHiC*Aggregation_table$Multiplier # Multiply the aggregate Chicago scores per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01
 
-Aggregation_table$Aggregate_chromstates_normalised<-Aggregation_table$Aggregate_chromstates_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
+Aggregation_table$Aggregate_PCHiC_normalised<-Aggregation_table$Aggregate_PCHiC_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
 
-Aggregation_table.dt<-data.table(Aggregation_table, key=c("VAR"))
-Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_chromstates_FINAL=sum(Aggregate_chromstates_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
+Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_PCHiC_FINAL=sum(Aggregate_PCHiC_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
 Aggregation_table_FINAL$phenotype<-phenotypes_array_sel # Finally aggregate the Relevant and No_relevant values to one value per variant and add the phenotype field
 
-################### Output files: chromstates_GLOBAL_preranked.tsv
-VAR     Aggregate_chromstates_FINAL     phenotype
-chr10_104698523_G_A     0.0100148648648649      ret
-chr10_104701039_T_TTATAA        0.0100124324324324      ret
+FINAL_df_NO_NA<-FINAL_df[!is.na(FINAL_df$Aggregate_PCHiC_FINAL),] # Exclude NA's
 
-# 337_Rank_chromstates_v2.R
+################### Output files: PCHiC_GLOBAL_preranked.tsv
+VAR     Aggregate_PCHiC_FINAL   phenotype
+chr10_104698523_G_A     0.0607758101027744      ret
+chr10_104701039_T_TTATAA        0.0607758101027744      ret
 
-################### Input files: chromstates_GLOBAL_preranked.tsv
-VAR     Aggregate_chromstates_FINAL     phenotype
-chr10_104698523_G_A     0.0100148648648649      ret
-chr10_104701039_T_TTATAA        0.0100124324324324      ret
-################### Input parameters: desiR_weights=$(echo "0.001,1.2,1")
+# 336_Rank_PCHiC_v2.R
 
-################### Pseudocode First Function:
+################### Input files: PCHiC_GLOBAL_preranked.tsv
+VAR     Aggregate_PCHiC_FINAL   phenotype
+chr10_104698523_G_A     0.0607758101027744      ret
+chr10_104701039_T_TTATAA        0.0607758101027744      ret
 
-chromstates_pre_ranked.dt<-data.table(chromstates_pre_ranked, key=c("VAR"))
-Aggregation_table<-as.data.frame(chromstates_pre_ranked.dt[,.(Total_Aggregate_chromstates=sum(Aggregate_chromstates_FINAL),
-                                                                 nPhenotypes=.N), by=key(chromstates_pre_ranked.dt)], stringsAsFactors=F)
-Aggregation_table$normalised_Total_Aggregate_chromstates<-Aggregation_table$Total_Aggregate_chromstates/Aggregation_table$nPhenotypes # Aggregate the Aggregate_chromstates_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
+################### Input parameters: desiR_weights=$(echo "0.1,10,1")
 
-Aggregation_table$normalised_Total_Aggregate_chromstates_component <- d.high(Aggregation_table$normalised_Total_Aggregate_chromstates, cut1=normalised_Total_Aggregate_chromstates_FINAL_LOW, cut2=normalised_Total_Aggregate_chromstates_FINAL_HIGH, scale=0.5)
-Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_chromstates_component,
-                                          weights=c(Overall_normalised_Total_Aggregate_chromstates_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.001 everything is flattened to 0 and above 1.2 everything is flattened to 1.
+################### Code main points First Function:
 
-################### Intermediate Output files: chromstates_GLOBAL_Ranked.tsv
-VAR     Total_Aggregate_chromstates     nPhenotypes     normalised_Total_Aggregate_chromstates  normalised_Total_Aggregate_chromstates_component        Overall_weight
-chr10_101244819_G_A     0.0004475       1       0.0004475       0       0
+PCHiC_pre_ranked.dt<-data.table(PCHiC_pre_ranked, key=c("VAR"))
+Aggregation_table<-as.data.frame(PCHiC_pre_ranked.dt[,.(Total_Aggregate_PCHiC=sum(Aggregate_PCHiC_FINAL),
+                                                                nPhenotypes=.N), by=key(PCHiC_pre_ranked.dt)], stringsAsFactors=F)
+Aggregation_table$normalised_Total_Aggregate_PCHiC<-Aggregation_table$Total_Aggregate_PCHiC/Aggregation_table$nPhenotypes # Aggregate the Aggregate_PCHiC_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
 
-################### Pseudocode Second Function:
+Aggregation_table$normalised_Total_Aggregate_PCHiC_component <- d.high(Aggregation_table$normalised_Total_Aggregate_PCHiC, cut1=normalised_Total_Aggregate_PCHiC_FINAL_LOW, cut2=normalised_Total_Aggregate_PCHiC_FINAL_HIGH, scale=0.5)
+Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_PCHiC_component,
+                                          weights=c(Overall_normalised_Total_Aggregate_PCHiC_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.1 everything is flattened to 0 and above 10 everything is flattened to 1.
 
-chromstates_ranked$mean_Overall_weight<-mean(chromstates_ranked$Overall_weight, na.rm =T)
-chromstates_ranked$sd_Overall_weight<-sd(chromstates_ranked$Overall_weight, na.rm =T)
-chromstates_ranked$Overall_weight_Z_score<-(chromstates_ranked$Overall_weight-chromstates_ranked$mean_Overall_weight)/chromstates_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+################### Intermediate Output files: PCHiC_GLOBAL_Ranked.tsv
+VAR     Total_Aggregate_PCHiC   nPhenotypes     normalised_Total_Aggregate_PCHiC        normalised_Total_Aggregate_PCHiC_component      Overall_weight
+chr10_101277639_TA_T    0.12268012554431        1       0.12268012554431        0.0478635745860307      0.0478635745860307
 
-################### Output files: Prepared_file_chromstates.rds
+################### Code main points Second Function:
+
+PCHiC_ranked$mean_Overall_weight<-mean(PCHiC_ranked$Overall_weight, na.rm =T)
+PCHiC_ranked$sd_Overall_weight<-sd(PCHiC_ranked$Overall_weight, na.rm =T)
+PCHiC_ranked$Overall_weight_Z_score<-(PCHiC_ranked$Overall_weight-PCHiC_ranked$mean_Overall_weight)/PCHiC_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+
+################### Output files: Prepared_file_PCHiC.rds
 VAR     value   value_Z_score   variable
-chr12_111844956_C_T     0.915374733518353       4.58495209415341        Rank_chromstates
-chr16_86016328_C_T      0.378500238084892       1.54630294787155        Rank_chromstates
+chr16_86016328_C_T      0.724737400667775       0.710225805378219       Rank_PCHiC
+chr17_38764524_T_A      0.71661332492833        0.691028536045906       Rank_PCHiC
+
+
+
+# 329_binder_of_scores_unranked_ATAC_v2.R
+
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: $ head PCHIC_ChicagoScore_graphs.csv. Chicago Score values for PCHiC filtered to aminimum of 5 Chicago Score per PIR that overlaps the variant.
+VAR,HGNC,ensembl_gene_id,value,CellType_DEF
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+
+
+################### Input files: PCHIC_part_II_Javierre_corresp_generation.txt
+Trait   RelevantCellType
+mono    Mac0
+wbc     Mac0
+mono_p  Mac0
+
+################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+################### Input parameters: relevant_not_relevant_weights=$(echo "1,0.01")
+
+################### Code Main points:
+
+ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
+for(i in 1:length(phenotypes_array)) # Loop per phenotype
+ALL_dB_double_subset_sel<-ALL_dB_double_subset[which(ALL_dB_double_subset$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
+Trait_to_CT_table_sel<-Trait_to_CT_table[which(Trait_to_CT_table$phenotype == phenotypes_array_sel),] # Select all cell types relevant for that phenotype
+
+PCHiC_INITIAL_sel<-PCHiC_INITIAL[which(PCHiC_INITIAL$VAR%in%ALL_dB_double_subset_sel$VAR),] # Select the variants with PCHiC values associated to that phenotype
+
+PCHiC_INITIAL_sel$Tag[which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Relevant"
+PCHiC_INITIAL_sel$Tag[-which(PCHiC_INITIAL_sel$CellType_DEF%in%Trait_to_CT_table_sel$Cell_Type)]<-"Not_relevant" # Label every cell type prediction as Relevant or Not releva
+
+PCHiC_INITIAL_sel.dt<-data.table(PCHiC_INITIAL_sel, key=c("VAR","Tag"))
+Aggregation_table<-as.data.frame(PCHiC_INITIAL_sel.dt[,.(Aggregate_PCHiC=sum(value),
+                                                                  nCells=.N), by=key(PCHiC_INITIAL_sel.dt)], stringsAsFactors=F) # Aggregate the Chicago Score value of all the interactions per variant and Tag
+
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Relevant")]<-relevant_not_relevant_weights[1]
+Aggregation_table$Multiplier[which(Aggregation_table$Tag == "Not_relevant")]<-relevant_not_relevant_weights[2]
+Aggregation_table$Aggregate_PCHiC_multiplied<-Aggregation_table$Aggregate_PCHiC*Aggregation_table$Multiplier # Multiply the aggregate Chicago scores per variant and Tag by the weight of relevant (1) vs Not relevant cell type (0.01
+
+Aggregation_table$Aggregate_PCHiC_normalised<-Aggregation_table$Aggregate_PCHiC_multiplied/Aggregation_table$nCells # Normalise by the number of relvant and not relevant cells per variant for that phenotype
+
+Aggregation_table_FINAL<-as.data.frame(Aggregation_table.dt[,.(Aggregate_PCHiC_FINAL=sum(Aggregate_PCHiC_normalised)), by=key(Aggregation_table.dt)], stringsAsFactors=F)
+Aggregation_table_FINAL$phenotype<-phenotypes_array_sel # Finally aggregate the Relevant and No_relevant values to one value per variant and add the phenotype field
+
+FINAL_df_NO_NA<-FINAL_df[!is.na(FINAL_df$Aggregate_PCHiC_FINAL),] # Exclude NA's
+
+################### Output files: PCHiC_GLOBAL_preranked.tsv
+VAR     Aggregate_PCHiC_FINAL   phenotype
+chr10_104698523_G_A     0.0607758101027744      ret
+chr10_104701039_T_TTATAA        0.0607758101027744      ret
+
+# 336_Rank_PCHiC_v2.R
+
+################### Input files: PCHiC_GLOBAL_preranked.tsv
+VAR     Aggregate_PCHiC_FINAL   phenotype
+chr10_104698523_G_A     0.0607758101027744      ret
+chr10_104701039_T_TTATAA        0.0607758101027744      ret
+
+################### Input parameters: desiR_weights=$(echo "0.1,10,1")
+
+################### Code main points First Function:
+
+PCHiC_pre_ranked.dt<-data.table(PCHiC_pre_ranked, key=c("VAR"))
+Aggregation_table<-as.data.frame(PCHiC_pre_ranked.dt[,.(Total_Aggregate_PCHiC=sum(Aggregate_PCHiC_FINAL),
+                                                                nPhenotypes=.N), by=key(PCHiC_pre_ranked.dt)], stringsAsFactors=F)
+Aggregation_table$normalised_Total_Aggregate_PCHiC<-Aggregation_table$Total_Aggregate_PCHiC/Aggregation_table$nPhenotypes # Aggregate the Aggregate_PCHiC_FINAL per variant (adding the number in different phenotypes) and normalise by the number of phenotypes per variant
+
+Aggregation_table$normalised_Total_Aggregate_PCHiC_component <- d.high(Aggregation_table$normalised_Total_Aggregate_PCHiC, cut1=normalised_Total_Aggregate_PCHiC_FINAL_LOW, cut2=normalised_Total_Aggregate_PCHiC_FINAL_HIGH, scale=0.5)
+Aggregation_table$Overall_weight <- d.overall(Aggregation_table$normalised_Total_Aggregate_PCHiC_component,
+                                          weights=c(Overall_normalised_Total_Aggregate_PCHiC_FINAL)) # To get a continues value between 1 and 0 apply the d.high function of the desiR package. Below 0.1 everything is flattened to 0 and above 10 everything is flattened to 1.
+
+################### Intermediate Output files: PCHiC_GLOBAL_Ranked.tsv
+VAR     Total_Aggregate_PCHiC   nPhenotypes     normalised_Total_Aggregate_PCHiC        normalised_Total_Aggregate_PCHiC_component      Overall_weight
+chr10_101277639_TA_T    0.12268012554431        1       0.12268012554431        0.0478635745860307      0.0478635745860307
+
+################### Code main points Second Function:
+
+PCHiC_ranked$mean_Overall_weight<-mean(PCHiC_ranked$Overall_weight, na.rm =T)
+PCHiC_ranked$sd_Overall_weight<-sd(PCHiC_ranked$Overall_weight, na.rm =T)
+PCHiC_ranked$Overall_weight_Z_score<-(PCHiC_ranked$Overall_weight-PCHiC_ranked$mean_Overall_weight)/PCHiC_ranked$sd_Overall_weight # Z-score normalisation for all the variants
+
+################### Output files: Prepared_file_PCHiC.rds
+VAR     value   value_Z_score   variable
+chr16_86016328_C_T      0.724737400667775       0.710225805378219       Rank_PCHiC
+chr17_38764524_T_A      0.71661332492833        0.691028536045906       Rank_PCHiC
+
+
+
+
+
+
+
+
+
+
 
 
 

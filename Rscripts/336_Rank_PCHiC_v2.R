@@ -311,9 +311,6 @@ Z_score_normalization_and_convergence = function(option_list)
   
   PCHiC_ranked$Overall_weight_Z_score<-(PCHiC_ranked$Overall_weight-PCHiC_ranked$mean_Overall_weight)/PCHiC_ranked$sd_Overall_weight
   
-  
-  PCHiC_ranked$Overall_weight_Z_score<-(PCHiC_ranked$Overall_weight-PCHiC_ranked$mean_Overall_weight)/PCHiC_ranked$sd_Overall_weight
-  
   cat("PCHiC_ranked_POST_merge_Z_score\n")
   cat(str(PCHiC_ranked))
   cat("\n")
