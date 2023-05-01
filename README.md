@@ -3,7 +3,7 @@
 
 #  Master script command line:
 
-$ bash 313_new_calculator_of_scores.sh <Path_to_output_files> <Memory allocation> <Processors> <queue>
+$ bash 313_new_calculator_of_scores.sh <Path_to_output_files> <Memory> <Processors> <queue>
 
 e.g. $ bash 313_new_calculator_of_scores.sh Annotation_results/ 4000 1 normal
 
@@ -45,6 +45,7 @@ chr1_1689164_C_T        4154    rs2235536       chr1    1689164 C       T       
   write.table(ALL_dB_subset.m_subset, file="GWAS_GLOBAL_per_traits.tsv", sep="\t", quote = F, row.names = F)
   write.table(ALL_dB_MAX_AF_subset_double, file="MAF_GLOBAL.tsv", sep="\t", quote = F, row.names = F) # Save the two files separately
 
+################### Output files:
 
 $ head GWAS_GLOBAL_per_traits.tsv
 VAR     phenotype       variable        value   value_Z_score
@@ -55,6 +56,51 @@ VAR     value   value_Z_score   variable
 chr10_101222300_G_A     0.104047        -1.20875664040154       MAF
 
 # Subscript: 340_binder_CADD.R 
+
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: Vuckovic_VEP_scores.csv.gz (annotation of CADD results)
+
+$ zcat /lustre/scratch123/hgi/teams/soranzo/projects/ALL_dB/csv_files/Vuckovic_VEP_scores.csv.gz|head -2
+"variant_id","label","chr","pos","allele","cadd_phred","cadd_raw","conservation"
+1,"rs35254660","1",1442413,"T",0.791,-0.185485,""
+
+################### Pseudocode:
+
+     Merge_table<-merge(ALL_dB_subset,
+			 CADD_result,
+			 by=c("chr","pos37","rs")) # Merge CADD result con GWAS results and keep the overlap
+      Merge_table_subset_NO_NA<-Merge_table_subset[!is.na(Merge_table_subset$cadd_raw),] # exclude NA's 
+
+################### Output files:
+
+$ head CADD_GLOBAL.tsv
+    VAR     cadd_phred      cadd_raw
+    chr10_101222300_G_A     0.191   -0.393199
+    chr10_101237412_T_C     3.693   0.066067
+
+# Subscript: 341_CADD.R
+
+################### Input files: CADD_GLOBAL.tsv
+    VAR     cadd_phred      cadd_raw
+    chr10_101222300_G_A     0.191   -0.393199
+    chr10_101237412_T_C     3.693   0.066067
+
+
+################### Pseudocode:
+
+ CADD$mean_CADD<-mean(CADD$cadd_raw, na.rm =T)
+  CADD$sd_CADD<-sd(CADD$cadd_raw, na.rm =T)
+CADD$cadd_raw_Z_score<-(CADD$cadd_raw-CADD$mean_CADD)/CADD$sd_CADD # Z-score normalization across all the variants
+
+################### Output files:
+
+$ Prepared_file_CADD.rds
+
+VAR     value   value_Z_score   variable
+chr1_202129205_G_A      1.933218        4.49399301821548        CADD_raw
+
+
+
 
 
 
