@@ -798,3 +798,135 @@ GENE_EXP_ranked$Overall_weight_Z_score<-(GENE_EXP_ranked$Overall_weight-GENE_EXP
 VAR     ensembl_gene_id HGNC    value   value_Z_score   variable
 chr12_111844956_C_T     ENSG00000111252 SH2B3   1       2.22500841360019        Rank_GENE_EXP
 chr12_111844956_C_T     ENSG00000257595 RP3-473L9.4     0.187394957124891       -0.354927879046733      Rank_GENE_EXP
+
+# 334_binder_of_scores_COGS.R
+
+################### Input files: ALL_dB.tsv (annotation of GWAS blood traits)
+################### Input files: COGS scores calculated in 7 cell types of PCHiC interactions (Ery,MK,Mono,Neut,tCD4,tCD8 and tB)
+ensg    name    cogs
+ENSG00000116285 ERRFI1  1.09892749422524e-06
+ENSG00000116288 PARK7   1.40998324127395e-14
+ENSG00000049249 TNFRSF9 0
+ENSG00000131686 CA6     0
+
+################### Input files: PCHIC_ChicagoScore_graphs.csv
+VAR,HGNC,ensembl_gene_id,value,CellType_DEF
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+
+################### Input files: VEP_consequence_graphs.csv VEP consequences per gene per variant
+
+transcript_id,ensembl_gene_id,HGNC,VEP_DEF_LABELS,VAR
+ENST00000300305,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+ENST00000416754,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+
+################### Input parameters: excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+
+################### Code Main points:
+
+ALL_dB_subset_restricted<-unique(ALL_dB_subset[-which(ALL_dB_subset$phenotype%in%excluded_phenotypes),]) # Exclude phenotypes of white blood cells that are correlated
+
+VEP_CSQ_subset_with_genes<-unique(VEP_CSQ_subset[which(VEP_CSQ_subset$ensembl_gene_id != "DUMMY"),]) # Exclude VEP consequences that are not linked to genes
+
+VEP_and_PCHiC<-unique(rbind(VEP_CSQ_subset_with_genes,PCHiC_subset)) # Get a data frame with the genes linked to a variant by VEP consequences and PCHiC interactions
+
+
+master_path<-"/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/COGS/rCOGS_out/COGS_scores/"
+file_list <- list.files(path=master_path, include.dirs = FALSE)
+file_list_sel<-file_list[grep("_interest_cell_types_",file_list)]
+phenotypes<-gsub("_COGS_interest_cell_types_with_gene_names","", file_list_sel)
+df<-as.data.frame(cbind(phenotypes,file_list_sel), stringsAsFactors=F)
+df_restricted<-unique(df[-which(df$phenotype%in%excluded_phenotypes),]) # Obtain a data frame with the phenotypes and the filename for the COGS files calculated for the interest cell types (Ery,MK,Mono,Neut,tCD4,tCD8 and tB)
+
+phenotypes_array<-unique(df_restricted$phenotype)
+for(i in 1:length(phenotypes_array)) # Loop per phenotype
+
+df_restricted_sel<-df_restricted[which(df_restricted$phenotype == phenotypes_array_sel),]
+file_selected_to_open<-unique(df_restricted_sel$file)
+COGS<-as.data.frame(fread(file=file_selected_to_open,sep="\t") , stringsAsFactors=F) # Open the COGs interest cell types (Ery,MK,Mono,Neut,tCD4,tCD8 and tB) file for that phenotype
+
+ALL_dB_subset_restricted_sel<-ALL_dB_subset_restricted[which(ALL_dB_subset_restricted$phenotype == phenotypes_array_sel),] # Select all variants associated to that phenotype
+
+VEP_and_PCHiC_sel<-VEP_and_PCHiC[which(VEP_and_PCHiC$VAR%in%ALL_dB_subset_restricted_sel$VAR),] # Select all the genes connected to those variants by VEP consequences or PCHiC
+
+COGS_subset<-merge(VEP_and_PCHiC_sel,
+                           COGS_subset,
+                           by="ensembl_gene_id") # Merge COGs values with the genes; we only keep the COGs values of the genes linked to variants by VEP and/or PCHiC
+
+COGS_subset$phenotype<-phenotypes_array_sel # Add the phenotype field
+Gather_NO_NA<-Gather[!is.na(Gather$cogs),] # Exclude NAs
+
+################### Output files: COGS_GLOBAL.tsv
+
+ensembl_gene_id VAR     HGNC    cogs    phenotype
+ENSG00000001167 chr6_15254908_G_A       NFYA    6.26313588159011e-06    ret_p
+ENSG00000002549 chr4_18018944_C_T       LAP3    0.377508796649921       ret_p
+ENSG00000002549 chr4_18032493_G_A       LAP3    0.377508796649921       ret_p
+ENSG00000002549 chr4_18019572_C_T       LAP3    0.377508796649921       ret_p
+
+# 335_COGS.R
+
+################### Input files: COGS_GLOBAL.tsv
+
+ensembl_gene_id VAR     HGNC    cogs    phenotype
+ENSG00000001167 chr6_15254908_G_A       NFYA    6.26313588159011e-06    ret_p
+ENSG00000002549 chr4_18018944_C_T       LAP3    0.377508796649921       ret_p
+ENSG00000002549 chr4_18032493_G_A       LAP3    0.377508796649921       ret_p
+ENSG00000002549 chr4_18019572_C_T       LAP3    0.377508796649921       ret_p
+
+################### Code main points Second Function:
+
+
+COGS$mean_cogs<-mean(COGS$cogs, na.rm =T)
+COGS$sd_cogs<-sd(COGS$cogs, na.rm =T)
+COGS$cogs_Z_score<-(COGS$cogs-COGS$mean_cogs)/COGS$sd_cogs # Z-score normalisation
+
+
+################### Output files: Prepared_file_COGS.rds
+VAR     ensembl_gene_id HGNC    phenotype       value   value_Z_score   variable
+chr18_60920854_C_T      ENSG00000171791 BCL2    rbc     0.997050456310743       1.97861233188362        COGS
+chr3_184091102_T_G      ENSG00000090534 THPO    plt     0       -0.842945974185377      COGS
+chr1_202129205_G_A      ENSG00000143851 PTPN7   plt     6.995914381136e-06      -0.842926176410645      COGS
+chr3_184091102_T_G      ENSG00000145191 EIF2B5  plt     0       -0.842945974185377      COGS
+
+# 350_binder_of_scores_pLOEUF.R
+
+################### Input files: gnomAD LOF_oe data gnomad.v2.1.1.lof_metrics.by_gene.txt
+
+gene    transcript      obs_mis exp_mis oe_mis  mu_mis  possible_mis    obs_mis_pphen   exp_mis_pphen   oe_mis_pphen    possible_mis_pphen      obs_syn exp_syn oe_syn  mu_syn  possible_syn    obs_lof mu_lof  possible_lof    exp_lof pLI     pNull   pRec    oe_lof  oe_syn_lower    oe_syn_upper    oe_mis_lower    oe_mis_upper oe_lof_lower    oe_lof_upper    constraint_flag syn_z   mis_z   lof_z   oe_lof_upper_rank       oe_lof_upper_bin        oe_lof_upper_bin_6      n_sites classic_caf     max_af  no_lofs obs_het_lof     obs_hom_lof     defined p       exp_hom_lof     classic_caf_afr classic_caf_amr classic_caf_asj classic_caf_eas      classic_caf_fin classic_caf_nfe classic_caf_oth classic_caf_sas p_afr   p_amr   p_asj   p_eas   p_fin   p_nfe   p_oth   p_sas   transcript_type gene_id transcript_level        cds_length      num_coding_exons        gene_type       gene_length     exac_pLI        exac_obs_lof    exac_exp_lof    exac_oe_lof brain_expression chromosome      start_position  end_position
+MED13   ENST00000397786 871     1.1178e+03      7.7921e-01      5.5598e-05      14195   314     5.2975e+02      5.9273e-01      6708    422     3.8753e+02      1.0890e+00      1.9097e-05      4248    0       4.9203e-06      1257    9.8429e+01      1.0000e+00      8.9436e-40      1.8383e-16      0.0000e+00      1.0050e+00   1.1800e+00      7.3600e-01      8.2400e-01      0.0000e+00      3.0000e-02              -1.3765e+00     2.6232e+00      9.1935e+00      0       0       0       2       1.2058e-05      8.0492e-06      124782  3       0       124785  1.2021e-05      1.8031e-05      0.0000e+00      0.0000e+00      0.0000e+00  0.0000e+00       9.2812e-05      8.8571e-06      0.0000e+00      0.0000e+00      0.0000e+00      0.0000e+00      0.0000e+00      0.0000e+00      9.2760e-05      8.8276e-06      0.0000e+00      0.0000e+00      protein_coding  ENSG00000108510 2       6522    30      protein_coding  122678  1.0000e+00      0       6.4393e+01   0.0000e+00      NA      17      60019966        60142643
+
+################### Input files: PCHIC_ChicagoScore_graphs.csv
+VAR,HGNC,ensembl_gene_id,value,CellType_DEF
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.509692830975,aCD4
+chr21_36789420_C_G,AP000330.8,ENSG00000234380,5.59914383391615,tCD4
+
+################### Input files: VEP_consequence_graphs.csv VEP consequences per gene per variant
+
+transcript_id,ensembl_gene_id,HGNC,VEP_DEF_LABELS,VAR
+ENST00000300305,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+ENST00000416754,ENSG00000159216,RUNX1,INTRON,chr21_36280376_A_G
+
+################### Code Main points:
+
+GENE_PLOEUF_NO_NA<-GENE_PLOEUF[!is.na(GENE_PLOEUF$oe_lof),] # Exclude NAs in oe_lof
+
+VEP_CSQ_subset_with_genes<-unique(VEP_CSQ_subset[which(VEP_CSQ_subset$ensembl_gene_id != "DUMMY"),]) # Exclude VEP consequences that are not linked to genes
+
+VEP_and_PCHiC<-unique(rbind(VEP_CSQ_subset_with_genes,PCHiC_subset)) # Get a data frame with the genes linked to a variant by VEP consequences and PCHiC interactions
+
+GENE_PLOEUF_NO_NA<-merge(GENE_PLOEUF_NO_NA,
+                     VEP_and_PCHiC,
+                     by=c("ensembl_gene_id","HGNC")) # Keep the oe_lof values for the genes that can be linked to the variants by VEP or PCHiC
+
+GENE_PLOEUF_NO_NA_subset.m<-melt(GENE_PLOEUF_NO_NA_subset, id.vars=c("VAR","HGNC","ensembl_gene_id")) # melt by "VAR","HGNC","ensembl_gene_id"
+
+mean_LOEUF<-mean(GENE_PLOEUF_NO_NA_subset.m$value)
+sd_LOEUF<-sd(GENE_PLOEUF_NO_NA_subset.m$value)
+GENE_PLOEUF_NO_NA_subset.m$value_Z_score<-(GENE_PLOEUF_NO_NA_subset.m$value-mean_LOEUF)/sd_LOEUF # Z-score normalisation of the oe_lof values
+
+################### Output files: Prepared_file_GENE_PLOEUF.rds
+
+VAR     HGNC    ensembl_gene_id variable        value   value_Z_score
+chr3_128322617_G_A      SEC61A1 ENSG00000058262 oe_lof  0.11405 -0.889375188828683
+chr3_184091102_T_G      THPO    ENSG00000090534 oe_lof  0.27137 -0.487842804843122
