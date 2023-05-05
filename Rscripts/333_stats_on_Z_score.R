@@ -225,7 +225,7 @@ Stats_function = function(option_list)
       
       if(category_sel == "M_and_M")
       {
-        Figure_4_categories_of_M_and_M<-c("Transcriptional_Regulation|R_in_candidate","No_Regulation_Detected|Unknown_mechanism")
+        Figure_4_categories_of_M_and_M<-c('Transcriptional_Regulation|R_in_candidate','No_Regulation_Detected|Unknown_mechanism','No_Regulation_Detected|Different_RNAseq_readout_needed')
         
         Table_of_labels_subset_restricted<-Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$M_and_M%in%Figure_4_categories_of_M_and_M),]
         
