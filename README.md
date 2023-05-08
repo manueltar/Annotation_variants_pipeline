@@ -3,9 +3,13 @@
 
 #  Master script command line:
 
-$ bash 313_new_calculator_of_scores.sh Path_to_output_files Memory Processors queue
+$ bash 313_new_calculator_of_scores.sh \<Path_to_output_files\> \<Memory\> \<Processors\> \<queue\>
 
 e.g. $ bash 313_new_calculator_of_scores.sh Annotation_results/ 4000 1 normal
+
+# R library requirements
+
+"AnnotationDbi","backports","Biobase","BiocGenerics","broom","cli","cowplot","crayon","data.table","desiR","digest","dplyr","farver","GenomeInfoDb","GenomicFeatures","GenomicRanges","ggeasy","ggforce","ggplot2","GO.db","gwascat","Homo.sapiens","IRanges","labeling","liftOver","optparse","OrganismDbi","org.Hs.eg.db","plyr","reshape2","R.methodsS3","R.oo","rstudioapi","rtracklayer","R.utils","S4Vectors","sandwich","splitstackshape","svglite","tidyverse","TxDb.Hsapiens.UCSC.hg19.knownGene","tzdb","withr"
 
 
 # Subscript: 346_binder_GWAS_and_Z_score.R 
