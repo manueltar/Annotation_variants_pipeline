@@ -935,6 +935,56 @@ VAR     HGNC    ensembl_gene_id variable        value   value_Z_score
 chr3_128322617_G_A      SEC61A1 ENSG00000058262 oe_lof  0.11405 -0.889375188828683
 chr3_184091102_T_G      THPO    ENSG00000090534 oe_lof  0.27137 -0.487842804843122
 
+
+# 353_New_binder_for_Absolute_effect_size_for_Pathogenic_variants_comparison
+
+################### Input files: ALL_db.tsv
+################### Input parameters: finemap_prob_Threshold_string=$(echo '0;''0.5;''0.9;')
+
+################### Code Main points:
+
+ALL_dB$Absolute_effect_size<-abs(ALL_dB$finemap_beta) # Calculate absolute effect size
+
+ALL_dB_subset.m.dt<-data.table(ALL_dB_subset.m, key=c("phenotype","variable"))
+ALL_dB_subset.m_GWAS_Type_parameters<-as.data.frame(ALL_dB_subset.m.dt[,.(mean_value=mean(value, na.rm =T),
+                                                          sd_value=sd(value, na.rm =T)),
+                                                       by=key(ALL_dB_subset.m.dt)], stringsAsFactors=F)
+ALL_dB_subset.m<-merge(ALL_dB_subset.m,
+                              ALL_dB_subset.m_GWAS_Type_parameters,
+                by=c("phenotype","variable"))
+ALL_dB_subset.m$value_Z_score<-(ALL_dB_subset.m$value-ALL_dB_subset.m$mean_value)/ALL_dB_subset.m$sd_value # Z score absolute effect size per phenotype
+
+ALL_dB_Thresholded<-ALL_dB_subset.m_subset[which(ALL_dB_subset.m_subset$PP >= finemap_prob_Threshold),] # Apply a PP threshold to subset associations
+
+################### Output files: "GWAS_GLOBAL_per_traits_Thresholded",'_',finemap_prob_Threshold,'.tsv'
+
+# 352_Comparison_between_pathogenic_and_prioritised_variants.R
+
+################### Input files: "GWAS_GLOBAL_per_traits_Thresholded",'_',finemap_prob_Threshold,'.tsv'
+################### Input files: Pathogenic_variants.txt
+################### Input files: ER_Labelling_Initial_Selection.rds
+
+################### Code Main points:
+
+VAR_Prioritization_dB$category_INTRO<-NA
+VAR_Prioritization_dB$category_INTRO<-as.character(VAR_Prioritization_dB$Fig1_Annot_Category)
+VAR_Prioritization_dB$category_INTRO[which(VAR_Prioritization_dB$rs%in%List_of_pathogenic_variants$rs)]<-"Pathogenic_variant"
+VAR_Prioritization_dB$category_INTRO<-factor(VAR_Prioritization_dB$category_INTRO,
+                                               levels=c("Common_variant","RV_C","RV_NC_lowPP","RV_NC_highPP_lowEffectSize","RV_NC_highPP_highEffectSize","Pathogenic_variant"),
+                                               ordered=T) # Create category_INTRO based on Fig1_Annot_Category substituting  variants in the pathogenic list for the label "Pathogenic_variant"
+
+
+Summary_table<-as.data.frame(GWAS_GLOBAL_per_traits_subset.dt[,.(n=.N,
+                                                                  Min=round(as.numeric(summary(value_Z_score)[1]),3),
+                                                                  Q1=round(as.numeric(summary(value_Z_score)[2]),3),
+                                                                  M=round(as.numeric(summary(value_Z_score)[3]),3),
+                                                                  Q3=round(as.numeric(summary(value_Z_score)[5]),3),
+                                                                  Max=round(as.numeric(summary(value_Z_score)[6]),3)),by=key(GWAS_GLOBAL_per_traits_subset.dt)], stringsAsFactors=F)
+PW_category<-pairwise.wilcox.test(GWAS_GLOBAL_per_traits_subset$value_Z_score, GWAS_GLOBAL_per_traits_subset[,indx.category_INTRO],
+                                      p.adjust.method = "BH") # Calculate distribution parameters and do stats
+  
+
+
 # 332_binder_of_Prepared_files_and_add_annotation_layer.R
 
 ################### Input files from the pipeline:

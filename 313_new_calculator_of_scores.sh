@@ -852,7 +852,7 @@ do
     Table_S4=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/FINAL_RESULTS/Fig4_pannels/Supp_Table_4_CURATED_Plus_phenotypes.rds")
     RMV_common=$(echo "chr4_1008212_C_T")
     RMV_labels=$(echo 'NOT_SCREENED_MPRA,NOT_SCREENED_genIE,No_RNA_Seq_HET_carriers')
-
+ 
 
     type=$(echo "compare_pathogenic_vs_prioritised_variants")
 
