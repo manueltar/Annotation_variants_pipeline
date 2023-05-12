@@ -775,6 +775,136 @@ echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "####################################################### Comparison with pathogenic variants from Vuckovic et al #########################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+
+echo "###################################################### binder_of_abs_finemap_for_Pathogenic_variant_comparison  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+
+
+finemap_prob_Threshold_string=$(echo '0;''0.5;''0.9;')
+#echo $finemap_prob_Threshold_string
+declare -a c=($(echo "$finemap_prob_Threshold_string" | tr ";" '\n'))
+
+arraylength=${#c[@]}
+
+
+
+echo "array_length: $arraylength"
+
+
+for (( i=0; i<${arraylength}; i++ ));
+do
+    finemap_prob_Threshold=${c[$i]}
+    echo "index: $i, finemap_prob_Threshold: $finemap_prob_Threshold"
+
+    output_dir_Pathogenic=$(echo "$output_dir""Pathogenic_variant_comparison""_""$finemap_prob_Threshold""/")
+
+    echo "$output_dir_Pathogenic"
+
+
+    mkdir -p $output_dir_Pathogenic
+
+
+
+    Rscript_binder_of_abs_finemap_for_Pathogenic_variant_comparison=/nfs/users/nfs_m/mt19/Scripts/R/353_New_binder_for_Absolute_effect_size_for_Pathogenic_variants_comparison.R
+
+
+    ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+    type=$(echo "binder_of_abs_finemap_for_Pathogenic_variant_comparison")
+
+
+
+    outfile_binder_of_abs_finemap_for_Pathogenic_variant_comparison=$(echo "$output_dir_Pathogenic""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+    touch $outfile_binder_of_abs_finemap_for_Pathogenic_variant_comparison
+    echo -n "" > $outfile_binder_of_abs_finemap_for_Pathogenic_variant_comparison
+    name_binder_of_abs_finemap_for_Pathogenic_variant_comparison=$(echo "$type""_""$finemap_prob_Threshold""_job")
+
+
+    step_mem=$(expr $mem \* 1)
+    step_pc=$(expr $pc \* 1)
+
+    echo "$mem""->""$step_mem"
+    echo "$pc""->""$step_pc"
+
+
+
+    echo "bsub -G team151 -o $outfile_binder_of_abs_finemap_for_Pathogenic_variant_comparison -M $step_mem  -J $name_binder_of_abs_finemap_for_Pathogenic_variant_comparison -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+    echo "\"$Rscript $Rscript_binder_of_abs_finemap_for_Pathogenic_variant_comparison \\" >> $output
+    echo "--ALL_dB $ALL_dB \\" >> $output
+    echo "--finemap_prob_Threshold $finemap_prob_Threshold \\" >> $output
+    echo "--type $type --out $output_dir_Pathogenic\"" >> $output
+
+
+    Rscript_compare_pathogenic_vs_prioritised_variants=/nfs/users/nfs_m/mt19/Scripts/R/352_Comparison_between_pathogenic_and_prioritised_variants.R
+
+    List_of_pathogenic_variants=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Pathogenic_variants.txt")
+    GWAS_GLOBAL_per_traits=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/GWAS_GLOBAL_per_traits_Thresholded.tsv")
+    VAR_Prioritization_dB=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/ER_Labelling_Initial_Selection.rds")
+    Table_S4=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/FINAL_RESULTS/Fig4_pannels/Supp_Table_4_CURATED_Plus_phenotypes.rds")
+    RMV_common=$(echo "chr4_1008212_C_T")
+    RMV_labels=$(echo 'NOT_SCREENED_MPRA,NOT_SCREENED_genIE,No_RNA_Seq_HET_carriers')
+
+
+    type=$(echo "compare_pathogenic_vs_prioritised_variants")
+
+
+
+
+    outfile_compare_pathogenic_vs_prioritised_variants=$(echo "$output_dir_Pathogenic""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+    touch $outfile_compare_pathogenic_vs_prioritised_variants
+    echo -n "" > $outfile_compare_pathogenic_vs_prioritised_variants
+    name_compare_pathogenic_vs_prioritised_variants=$(echo "$type""_""$finemap_prob_Threshold""_job")
+
+
+    step_mem=$(expr $mem \* 1)
+    step_pc=$(expr $pc \* 1)
+
+    echo "$mem""->""$step_mem"
+    echo "$pc""->""$step_pc"
+
+
+    echo "bsub -G team151 -o $outfile_compare_pathogenic_vs_prioritised_variants -M $step_mem -w\"done($name_binder_of_abs_finemap_for_Pathogenic_variant_comparison)\" -J $name_compare_pathogenic_vs_prioritised_variants -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=\
+1]\" -n$step_pc -q $queue -- \\" >> $output
+    #echo "bsub -G team151 -o $outfile_compare_pathogenic_vs_prioritised_variants -M $step_mem  -J $name_compare_pathogenic_vs_prioritised_variants -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+    echo "\"$Rscript $Rscript_compare_pathogenic_vs_prioritised_variants \\" >> $output
+    echo "--List_of_pathogenic_variants $List_of_pathogenic_variants \\" >> $output
+    echo "--finemap_prob_Threshold $finemap_prob_Threshold \\" >> $output
+    echo "--GWAS_GLOBAL_per_traits $GWAS_GLOBAL_per_traits \\" >> $output
+    echo "--VAR_Prioritization_dB $VAR_Prioritization_dB \\" >> $output
+    echo "--Table_S4 $Table_S4 \\" >> $output
+    echo "--RMV_common $RMV_common \\" >> $output
+    echo "--RMV_labels $RMV_labels \\" >> $output
+    echo "--type $type --out $output_dir_Pathogenic\"" >> $output
+
+
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $outpu
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
