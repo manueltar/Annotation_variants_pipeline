@@ -21,760 +21,805 @@ echo "#!/bin/bash"  >> $output
 Rscript=/software/R-4.1.0/bin/Rscript
 
 
+
+
+
+
+
 # echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $outpu
 # echo "#########################################################################################################################################################################"  >> $output
 # echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "####################################################### VARIANT BASED FEATURES #############################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+# echo "####################################################### MSC GRAPH #############################################################################################"  >> $output
 # echo "#########################################################################################################################################################################"  >> $output
 # echo "#########################################################################################################################################################################"  >> $output
 
 
-# echo "###################################################### binder_of_scores_GWAS  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
 
-# Rscript_binder_of_scores_GWAS=/nfs/users/nfs_m/mt19/Scripts/R/346_binder_GWAS_and_Z_score.R
+Rscript_VEP_CSQ=/nfs/users/nfs_m/mt19/Scripts/R/235_ER_VEP_CSQ_v5.R
+
+VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+CSQ_colors=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NEW_MPRA/df_CSQ_colors.rds")
+
+Initial_Selection_WITH_CSQ_labels=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/""ER_Labelling_Initial_Selection_with_CSQ_labels.rds")
+type=$(echo "VEP_CSQ")
+
+outfile_ER_VEP_CSQ=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_ER_VEP_CSQ
+echo -n "" > $outfile_ER_VEP_CSQ
+name_ER_VEP_CSQ=$(echo "$type""_job")
+Categories_colors=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/""ER_Labelling_Categories_colors.rds")
+
+echo "bsub -G team151 -o $outfile_ER_VEP_CSQ -M $mem  -J $name_ER_VEP_CSQ -R\"select[mem>=$mem] rusage[mem=$mem] span[hosts=1]\" -n$pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_VEP_CSQ \\" >> $output
+echo "--Initial_Selection $Initial_Selection_WITH_CSQ_labels \\" >> $output
+echo "--Categories_colors $Categories_colors \\" >> $output
+echo "--CSQ_colors $CSQ_colors \\" >> $output
+echo "--VEP_CSQ $VEP_CSQ \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--type $type --out $output_dir\"" >> $output
 
 
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_GWAS")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
 
-# outfile_binder_of_scores_GWAS=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_GWAS
-# echo -n "" > $outfile_binder_of_scores_GWAS
-# name_binder_of_scores_GWAS=$(echo "$type""_job")
+
+
+
+
+
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $outpu
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "####################################################### VARIANT BASED FEATURES #############################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+
+echo "###################################################### binder_of_scores_GWAS  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_GWAS=/nfs/users/nfs_m/mt19/Scripts/R/346_binder_GWAS_and_Z_score.R
+
+
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_GWAS")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+
+outfile_binder_of_scores_GWAS=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_GWAS
+echo -n "" > $outfile_binder_of_scores_GWAS
+name_binder_of_scores_GWAS=$(echo "$type""_job")
 
  
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
 
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
- 
-
-# echo "bsub -G team151 -o $outfile_binder_of_scores_GWAS -M $step_mem  -J $name_binder_of_scores_GWAS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_GWAS \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
-# echo "###################################################### binder_of_scores_CADD  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_CADD=/nfs/users/nfs_m/mt19/Scripts/R/340_binder_CADD.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_CADD")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# CADD_result=$(echo "/lustre/scratch123/hgi/teams/soranzo/projects/ALL_dB/csv_files/Vuckovic_VEP_scores.csv.gz")
-
-
-# outfile_binder_of_scores_CADD=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
-# touch $outfile_binder_of_scores_CADD
-# echo -n "" > $outfile_binder_of_scores_CADD
-# name_binder_of_scores_CADD=$(echo "$type""_""$finemap_prob_Threshold""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
- 
-
-# echo "bsub -G team151 -o $outfile_binder_of_scores_CADD -M $step_mem  -J $name_binder_of_scores_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_CADD \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--CADD_result $CADD_result \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
-
-# echo "###################################################### CADD  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_CADD=/nfs/users/nfs_m/mt19/Scripts/R/341_CADD.R
-
-# CADD=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/CADD_GLOBAL.tsv')
-# type=$(echo "CADD")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-
-
-# outfile_CADD=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_CADD
-# echo -n "" > $outfile_CADD
-# name_CADD=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
-
-
-# echo "bsub -G team151 -o $outfile_CADD -M $step_mem -w\"done($name_binder_of_scores_CADD)\" -J $name_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_CADD -M $step_mem  -J $name_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_CADD \\" >> $output
-# echo "--CADD $CADD \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
-
-# echo "###################################################### binder_of_scores_NCBoost  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_NCBoost=/nfs/users/nfs_m/mt19/Scripts/R/342_binder_NCBoost.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_NCBoost")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# NCBoost_result=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NCBoost/haemvar_manuel_200903_NCBOOST.tsv")
-
-
-# outfile_binder_of_scores_NCBoost=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
-# touch $outfile_binder_of_scores_NCBoost
-# echo -n "" > $outfile_binder_of_scores_NCBoost
-# name_binder_of_scores_NCBoost=$(echo "$type""_""$finemap_prob_Threshold""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_NCBoost -M $step_mem  -J $name_binder_of_scores_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_NCBoost \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--NCBoost_result $NCBoost_result \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-# echo "###################################################### NCBoost  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_NCBoost=/nfs/users/nfs_m/mt19/Scripts/R/343_NCBoost.R
-
-# NCBoost=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/NCBoost_GLOBAL.tsv')
-# type=$(echo "NCBoost")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+echo "bsub -G team151 -o $outfile_binder_of_scores_GWAS -M $step_mem  -J $name_binder_of_scores_GWAS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_GWAS \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
-# outfile_NCBoost=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_NCBoost
-# echo -n "" > $outfile_NCBoost
-# name_NCBoost=$(echo "$type""_job")
+echo "###################################################### binder_of_scores_CADD  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_CADD=/nfs/users/nfs_m/mt19/Scripts/R/340_binder_CADD.R
 
 
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_CADD")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+CADD_result=$(echo "/lustre/scratch123/hgi/teams/soranzo/projects/ALL_dB/csv_files/Vuckovic_VEP_scores.csv.gz")
 
 
-# echo "bsub -G team151 -o $outfile_NCBoost -M $step_mem -w\"done($name_binder_of_scores_NCBoost)\" -J $name_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_NCBoost -M $step_mem  -J $name_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_NCBoost \\" >> $output
-# echo "--NCBoost $NCBoost \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-# echo "###################################################### binder_of_scores_constraint_Z  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_constraint_Z=/nfs/users/nfs_m/mt19/Scripts/R/349_Constraint_Z.R
+outfile_binder_of_scores_CADD=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+touch $outfile_binder_of_scores_CADD
+echo -n "" > $outfile_binder_of_scores_CADD
+name_binder_of_scores_CADD=$(echo "$type""_""$finemap_prob_Threshold""_job")
 
 
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_constraint_Z")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# Constraint_Z=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Constraint_Z/constraint_z_genome_1kb.qc.download.txt")
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
 
-
-# outfile_binder_of_scores_constraint_Z=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
-# touch $outfile_binder_of_scores_constraint_Z
-# echo -n "" > $outfile_binder_of_scores_constraint_Z
-# name_binder_of_scores_constraint_Z=$(echo "$type""_""$finemap_prob_Threshold""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_constraint_Z -M $step_mem  -J $name_binder_of_scores_constraint_Z -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_constraint_Z \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--Constraint_Z $Constraint_Z \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "bsub -G team151 -o $outfile_binder_of_scores_CADD -M $step_mem  -J $name_binder_of_scores_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_CADD \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--CADD_result $CADD_result \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
+echo "###################################################### CADD  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
-# echo "###################################################### binder_of_scores_SpliceAI  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+Rscript_CADD=/nfs/users/nfs_m/mt19/Scripts/R/341_CADD.R
 
-# Rscript_binder_of_scores_SpliceAI=/nfs/users/nfs_m/mt19/Scripts/R/344_binder_SpliceAI.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_SpliceAI")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# SpliceAI_result=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/spliceAI/haemvar_manuel_200903_spliceAI_output_fixed.vcf")
-# GENE_table=$(echo "/nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_GENES_table.txt")
-
-# outfile_binder_of_scores_SpliceAI=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
-# touch $outfile_binder_of_scores_SpliceAI
-# echo -n "" > $outfile_binder_of_scores_SpliceAI
-# name_binder_of_scores_SpliceAI=$(echo "$type""_""$finemap_prob_Threshold""_job")
+CADD=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/CADD_GLOBAL.tsv')
+type=$(echo "CADD")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
 
 
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
+outfile_CADD=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_CADD
+echo -n "" > $outfile_CADD
+name_CADD=$(echo "$type""_job")
 
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
 
- 
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_SpliceAI -M $step_mem  -J $name_binder_of_scores_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_SpliceAI \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--GENE_table $GENE_table \\" >> $output
-# echo "--SpliceAI_result $SpliceAI_result \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
 
 
-# echo "###################################################### SpliceAI  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_SpliceAI=/nfs/users/nfs_m/mt19/Scripts/R/345_SpliceAI.R
-
-# SpliceAI=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/SpliceAI_GLOBAL.tsv')
-# type=$(echo "SpliceAI")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-
-
-# outfile_SpliceAI=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_SpliceAI
-# echo -n "" > $outfile_SpliceAI
-# name_SpliceAI=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+echo "bsub -G team151 -o $outfile_CADD -M $step_mem -w\"done($name_binder_of_scores_CADD)\" -J $name_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_CADD -M $step_mem  -J $name_CADD -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_CADD \\" >> $output
+echo "--CADD $CADD \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
-# echo "bsub -G team151 -o $outfile_SpliceAI -M $step_mem -w\"done($name_binder_of_scores_SpliceAI)\" -J $name_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_SpliceAI -M $step_mem  -J $name_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_SpliceAI \\" >> $output
-# echo "--SpliceAI $SpliceAI \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "###################################################### binder_of_scores_NCBoost  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_NCBoost=/nfs/users/nfs_m/mt19/Scripts/R/342_binder_NCBoost.R
 
 
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_NCBoost")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+NCBoost_result=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NCBoost/haemvar_manuel_200903_NCBOOST.tsv")
 
 
-# echo "###################################################### binder_of_scores_unranked_chromstates  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_unranked_chromstates=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_chromstates_v2.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_unranked_chromstates")
-# excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# relevant_not_relevant_weights=$(echo "1,0.01")
-# matrix_weighted_regulatory_states=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Weights_chromatin_states.tsv")
-# chromstates_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/chrmstates_graphs.csv")
-# Trait_to_CT_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/CellType_Trait_table_generation.txt")
+outfile_binder_of_scores_NCBoost=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+touch $outfile_binder_of_scores_NCBoost
+echo -n "" > $outfile_binder_of_scores_NCBoost
+name_binder_of_scores_NCBoost=$(echo "$type""_""$finemap_prob_Threshold""_job")
 
 
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
 
-# outfile_binder_of_scores_unranked_chromstates=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_unranked_chromstates
-# echo -n "" > $outfile_binder_of_scores_unranked_chromstates
-# name_binder_of_scores_unranked_chromstates=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-# step_queue=$(echo "normal")
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-# echo "$queue""->""$step_queue"
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_chromstates -M $step_mem  -J $name_binder_of_scores_unranked_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_unranked_chromstates \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--matrix_weighted_regulatory_states $matrix_weighted_regulatory_states \\" >> $output
-# echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
-# echo "--chromstates_INITIAL $chromstates_INITIAL \\" >> $output
-# echo "--Trait_to_CT_table $Trait_to_CT_table \\" >> $output
-# echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "bsub -G team151 -o $outfile_binder_of_scores_NCBoost -M $step_mem  -J $name_binder_of_scores_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_NCBoost \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--NCBoost_result $NCBoost_result \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+echo "###################################################### NCBoost  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_NCBoost=/nfs/users/nfs_m/mt19/Scripts/R/343_NCBoost.R
+
+NCBoost=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/NCBoost_GLOBAL.tsv')
+type=$(echo "NCBoost")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+
+
+outfile_NCBoost=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_NCBoost
+echo -n "" > $outfile_NCBoost
+name_NCBoost=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
 
 
+echo "bsub -G team151 -o $outfile_NCBoost -M $step_mem -w\"done($name_binder_of_scores_NCBoost)\" -J $name_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_NCBoost -M $step_mem  -J $name_NCBoost -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_NCBoost \\" >> $output
+echo "--NCBoost $NCBoost \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
-# echo "###################################################### chromstates Rank  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+echo "###################################################### binder_of_scores_constraint_Z  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
-# Rscript_chromstates=/nfs/users/nfs_m/mt19/Scripts/R/337_Rank_chromstates_v2.R
-
-# chromstates_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/chromstates_GLOBAL_preranked.tsv')
-# type=$(echo "chromstates")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# desiR_weights=$(echo "0.001,1.2,1")
-
-
-
-# outfile_chromstates=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_chromstates
-# echo -n "" > $outfile_chromstates
-# name_chromstates=$(echo "$type""_job")
+Rscript_binder_of_scores_constraint_Z=/nfs/users/nfs_m/mt19/Scripts/R/349_Constraint_Z.R
 
 
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
-
-# echo "bsub -G team151 -o $outfile_chromstates -M $step_mem -w\"done($name_binder_of_scores_unranked_chromstates)\" -J $name_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_chromstates -M $step_mem  -J $name_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_chromstates \\" >> $output
-# echo "--chromstates_pre_ranked $chromstates_pre_ranked \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--desiR_weights $desiR_weights \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_constraint_Z")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+Constraint_Z=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Constraint_Z/constraint_z_genome_1kb.qc.download.txt")
 
 
-# echo "###################################################### binder_of_scores_unranked_PCHiC  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_unranked_PCHiC=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_but_thresholded_PCHiC_v2.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_unranked_PCHiC")
-# excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# relevant_not_relevant_weights=$(echo "1,0.01")
-# PCHiC_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv")
-# Trait_to_CT_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/PCHIC_part_II_Javierre_corresp_generation.txt")
+outfile_binder_of_scores_constraint_Z=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+touch $outfile_binder_of_scores_constraint_Z
+echo -n "" > $outfile_binder_of_scores_constraint_Z
+name_binder_of_scores_constraint_Z=$(echo "$type""_""$finemap_prob_Threshold""_job")
 
 
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
 
-# outfile_binder_of_scores_unranked_PCHiC=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_unranked_PCHiC
-# echo -n "" > $outfile_binder_of_scores_unranked_PCHiC
-# name_binder_of_scores_unranked_PCHiC=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-# step_queue=$(echo "normal")
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-# echo "$queue""->""$step_queue"
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_PCHiC -M $step_mem  -J $name_binder_of_scores_unranked_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_unranked_PCHiC \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
-# echo "--PCHiC_INITIAL $PCHiC_INITIAL \\" >> $output
-# echo "--Trait_to_CT_table $Trait_to_CT_table \\" >> $output
-# echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "bsub -G team151 -o $outfile_binder_of_scores_constraint_Z -M $step_mem  -J $name_binder_of_scores_constraint_Z -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_constraint_Z \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--Constraint_Z $Constraint_Z \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
 
-# echo "###################################################### PCHiC Rank  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+echo "###################################################### binder_of_scores_SpliceAI  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
-# Rscript_PCHiC=/nfs/users/nfs_m/mt19/Scripts/R/336_Rank_PCHiC_v2.R
-
-# PCHiC_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/PCHiC_GLOBAL_preranked.tsv')
-# type=$(echo "PCHiC")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# desiR_weights=$(echo "0.1,10,1")
+Rscript_binder_of_scores_SpliceAI=/nfs/users/nfs_m/mt19/Scripts/R/344_binder_SpliceAI.R
 
 
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_SpliceAI")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+SpliceAI_result=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/spliceAI/haemvar_manuel_200903_spliceAI_output_fixed.vcf")
+GENE_table=$(echo "/nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_GENES_table.txt")
 
-# outfile_PCHiC=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_PCHiC
-# echo -n "" > $outfile_PCHiC
-# name_PCHiC=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+outfile_binder_of_scores_SpliceAI=$(echo "$output_dir""outfile""_""$type""_""$finemap_prob_Threshold"".out")
+touch $outfile_binder_of_scores_SpliceAI
+echo -n "" > $outfile_binder_of_scores_SpliceAI
+name_binder_of_scores_SpliceAI=$(echo "$type""_""$finemap_prob_Threshold""_job")
 
 
-# echo "bsub -G team151 -o $outfile_PCHiC -M $step_mem -w\"done($name_binder_of_scores_unranked_PCHiC)\" -J $name_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_PCHiC -M $step_mem  -J $name_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_PCHiC \\" >> $output
-# echo "--PCHiC_pre_ranked $PCHiC_pre_ranked \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--desiR_weights $desiR_weights \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
 
-
-# echo "###################################################### binder_of_scores_unranked_ATAC  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_unranked_ATAC=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_ATAC_v2.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_unranked_ATAC")
-# excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# relevant_not_relevant_weights=$(echo "1,0.01")
-# ATAC_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/ATAC_Seq_Ranked_graphs.csv")
-# Trait_to_Lineage_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/ATAC_scaled_trait_table_generation.txt")
-# Lineage_to_Cell_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/ATAC_scaled_Lineage_hierarchy_generation.txt")
-
-
-
-# outfile_binder_of_scores_unranked_ATAC=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_unranked_ATAC
-# echo -n "" > $outfile_binder_of_scores_unranked_ATAC
-# name_binder_of_scores_unranked_ATAC=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
-# step_queue=$(echo "normal")
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-# echo "$queue""->""$step_queue"
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_ATAC -M $step_mem  -J $name_binder_of_scores_unranked_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_unranked_ATAC \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
-# echo "--ATAC_INITIAL $ATAC_INITIAL \\" >> $output
-# echo "--Trait_to_Lineage_table $Trait_to_Lineage_table \\" >> $output
-# echo "--Lineage_to_Cell_table $Lineage_to_Cell_table \\" >> $output
-# echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
- 
-# echo "###################################################### ATAC_Rank  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_ATAC_Rank=/nfs/users/nfs_m/mt19/Scripts/R/330_Rank_ATAC_v2.R
-
-# ATAC_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/ATAC_GLOBAL_preranked.tsv')
-# type=$(echo "ATAC_Rank")
-# Open_in_CT_threshold=$(echo "0.1")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# desiR_weights=$(echo "0.5,5,0.05,0.8,1,3")
-
-
-# outfile_ATAC_Rank=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
-# touch $outfile_ATAC_Rank
-# echo -n "" > $outfile_ATAC_Rank
-# name_ATAC_Rank=$(echo "$type""_""$Open_in_CT_threshold""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
-
-# echo "bsub -G team151 -o $outfile_ATAC_Rank -M $step_mem -w\"done($name_binder_of_scores_unranked_ATAC)\"  -J $name_ATAC_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_ATAC_Rank -M $step_mem  -J $name_ATAC_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_ATAC_Rank \\" >> $output
-# echo "--ATAC_pre_ranked $ATAC_pre_ranked \\" >> $output
-# echo "--Open_in_CT_threshold $Open_in_CT_threshold \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--desiR_weights $desiR_weights \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
-# echo "###################################################### multi_lineage_ATAC  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_multi_lineage_ATAC=/nfs/users/nfs_m/mt19/Scripts/R/331_Rank_multi_lineage_ATAC.R
-
-# ATAC_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/ATAC_GLOBAL_Ranked.tsv')
-# type=$(echo "multi_lineage_ATAC")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# desiR_weights=$(echo "0.9,2.5,0.1,0.7,3,1")
-
-
-# outfile_multi_lineage_ATAC=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
-# touch $outfile_multi_lineage_ATAC
-# echo -n "" > $outfile_multi_lineage_ATAC
-# name_multi_lineage_ATAC=$(echo "$type""_""$Open_in_CT_threshold""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
-
-# echo "bsub -G team151 -o $outfile_multi_lineage_ATAC -M $step_mem -w\"done($name_ATAC_Rank)\" -J $name_multi_lineage_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_multi_lineage_ATAC -M $step_mem  -J $name_multi_lineage_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_multi_lineage_ATAC \\" >> $output
-# echo "--ATAC_ranked $ATAC_ranked \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--desiR_weights $desiR_weights \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+echo "bsub -G team151 -o $outfile_binder_of_scores_SpliceAI -M $step_mem  -J $name_binder_of_scores_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_SpliceAI \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--GENE_table $GENE_table \\" >> $output
+echo "--SpliceAI_result $SpliceAI_result \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $outpu
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "####################################################### GENE BASED FEATURES #############################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+echo "###################################################### SpliceAI  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_SpliceAI=/nfs/users/nfs_m/mt19/Scripts/R/345_SpliceAI.R
+
+SpliceAI=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/SpliceAI_GLOBAL.tsv')
+type=$(echo "SpliceAI")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
 
 
-# echo "###################################################### binder_of_scores_GENE_EXP  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+outfile_SpliceAI=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_SpliceAI
+echo -n "" > $outfile_SpliceAI
+name_SpliceAI=$(echo "$type""_job")
 
-# Rscript_binder_of_scores_GENE_EXP=/nfs/users/nfs_m/mt19/Scripts/R/338_binder_of_scores_Gene_EXP.R
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
 
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_GENE_EXP")
-# excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
-# PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
-# GENE_EXP=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/BP_Iso_Reanalysis/OLD/GENE_EXP_Harmonization.tsv")
-# TOME_correspondence=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/Correspondence_phenotype_TOME.txt")
+
+echo "bsub -G team151 -o $outfile_SpliceAI -M $step_mem -w\"done($name_binder_of_scores_SpliceAI)\" -J $name_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_SpliceAI -M $step_mem  -J $name_SpliceAI -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_SpliceAI \\" >> $output
+echo "--SpliceAI $SpliceAI \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
 
+echo "###################################################### binder_of_scores_unranked_chromstates  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
-# outfile_binder_of_scores_GENE_EXP=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_GENE_EXP
-# echo -n "" > $outfile_binder_of_scores_GENE_EXP
-# name_binder_of_scores_GENE_EXP=$(echo "$type""_job")
+Rscript_binder_of_scores_unranked_chromstates=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_chromstates_v2.R
 
 
-# step_mem=$(expr $mem \* 4)
-# step_pc=$(expr $pc \* 4)
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_unranked_chromstates")
+excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+relevant_not_relevant_weights=$(echo "1,0.01")
+matrix_weighted_regulatory_states=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Weights_chromatin_states.tsv")
+chromstates_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/chrmstates_graphs.csv")
+Trait_to_CT_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/CellType_Trait_table_generation.txt")
 
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+
+
+outfile_binder_of_scores_unranked_chromstates=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_unranked_chromstates
+echo -n "" > $outfile_binder_of_scores_unranked_chromstates
+name_binder_of_scores_unranked_chromstates=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
+step_queue=$(echo "normal")
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+echo "$queue""->""$step_queue"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_GENE_EXP -M $step_mem  -J $name_binder_of_scores_GENE_EXP -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_GENE_EXP \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--VEP_CSQ $VEP_CSQ \\" >> $output
-# echo "--PCHiC $PCHiC \\" >> $output
-# echo "--GENE_EXP $GENE_EXP \\" >> $output
-# echo "--TOME_correspondence $TOME_correspondence \\" >> $output
-# echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-# echo "###################################################### GENE_EXP_Rank  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_GENE_EXP_Rank=/nfs/users/nfs_m/mt19/Scripts/R/339_Gene_EXP.R
-
-# GENE_EXP_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/GENE_EXP_GLOBAL.tsv')
-# type=$(echo "GENE_EXP_Rank")
-# relevant_not_relevant_weights=$(echo "1,0.01")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# desiR_weights=$(echo "0.1,20,1")
-
-
-# outfile_GENE_EXP_Rank=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_GENE_EXP_Rank
-# echo -n "" > $outfile_GENE_EXP_Rank
-# name_GENE_EXP_Rank=$(echo "$type""_job")
-
-
-# step_mem=$(expr $mem \* 3)
-# step_pc=$(expr $pc \* 3)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
-
-# echo "bsub -G team151 -o $outfile_GENE_EXP_Rank -M $step_mem -w\"done($name_binder_of_scores_GENE_EXP)\"  -J $name_GENE_EXP_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# #echo "bsub -G team151 -o $outfile_GENE_EXP_Rank -M $step_mem  -J $name_GENE_EXP_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_GENE_EXP_Rank \\" >> $output
-# echo "--GENE_EXP_pre_ranked $GENE_EXP_pre_ranked \\" >> $output
-# echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--desiR_weights $desiR_weights \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-# echo "###################################################### binder_of_scores_GENE_PLOEUF  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_GENE_PLOEUF=/nfs/users/nfs_m/mt19/Scripts/R/350_binder_of_scores_pLOEUF.R
-
-
-# type=$(echo "binder_of_scores_GENE_PLOEUF")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
-# PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
-# GENE_PLOEUF=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/pLOEUF/gnomad.v2.1.1.lof_metrics.by_gene.txt")
-# TRANSCRIPTS_table=$(echo "/nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_Transcripts_table.txt")
+echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_chromstates -M $step_mem  -J $name_binder_of_scores_unranked_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_unranked_chromstates \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--matrix_weighted_regulatory_states $matrix_weighted_regulatory_states \\" >> $output
+echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
+echo "--chromstates_INITIAL $chromstates_INITIAL \\" >> $output
+echo "--Trait_to_CT_table $Trait_to_CT_table \\" >> $output
+echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
-# outfile_binder_of_scores_GENE_PLOEUF=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_GENE_PLOEUF
-# echo -n "" > $outfile_binder_of_scores_GENE_PLOEUF
-# name_binder_of_scores_GENE_PLOEUF=$(echo "$type""_job")
 
+echo "###################################################### chromstates Rank  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
+Rscript_chromstates=/nfs/users/nfs_m/mt19/Scripts/R/337_Rank_chromstates_v2.R
 
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
-
- 
-
-# echo "bsub -G team151 -o $outfile_binder_of_scores_GENE_PLOEUF -M $step_mem  -J $name_binder_of_scores_GENE_PLOEUF -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_GENE_PLOEUF \\" >> $output
-# echo "--VEP_CSQ $VEP_CSQ \\" >> $output
-# echo "--PCHiC $PCHiC \\" >> $output
-# echo "--GENE_PLOEUF $GENE_PLOEUF \\" >> $output
-# echo "--TRANSCRIPTS_table $TRANSCRIPTS_table \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+chromstates_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/chromstates_GLOBAL_preranked.tsv')
+type=$(echo "chromstates")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+desiR_weights=$(echo "0.001,1.2,1")
 
 
 
-# echo "###################################################### binder_of_scores_COGS  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_binder_of_scores_COGS=/nfs/users/nfs_m/mt19/Scripts/R/334_binder_of_scores_COGS.R
-
-
-# ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
-# type=$(echo "binder_of_scores_COGS")
-# excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
-# PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
+outfile_chromstates=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_chromstates
+echo -n "" > $outfile_chromstates
+name_chromstates=$(echo "$type""_job")
 
 
-# outfile_binder_of_scores_COGS=$(echo "$output_dir""outfile""_""$type"".out")
-# touch $outfile_binder_of_scores_COGS
-# echo -n "" > $outfile_binder_of_scores_COGS
-# name_binder_of_scores_COGS=$(echo "$type""_job")
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
 
 
-# step_mem=$(expr $mem \* 2)
-# step_pc=$(expr $pc \* 2)
+echo "bsub -G team151 -o $outfile_chromstates -M $step_mem -w\"done($name_binder_of_scores_unranked_chromstates)\" -J $name_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_chromstates -M $step_mem  -J $name_chromstates -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_chromstates \\" >> $output
+echo "--chromstates_pre_ranked $chromstates_pre_ranked \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--desiR_weights $desiR_weights \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+
+echo "###################################################### binder_of_scores_unranked_PCHiC  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_unranked_PCHiC=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_but_thresholded_PCHiC_v2.R
+
+
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_unranked_PCHiC")
+excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+relevant_not_relevant_weights=$(echo "1,0.01")
+PCHiC_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv")
+Trait_to_CT_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/PCHIC_part_II_Javierre_corresp_generation.txt")
+
+
+
+outfile_binder_of_scores_unranked_PCHiC=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_unranked_PCHiC
+echo -n "" > $outfile_binder_of_scores_unranked_PCHiC
+name_binder_of_scores_unranked_PCHiC=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
+step_queue=$(echo "normal")
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+echo "$queue""->""$step_queue"
 
  
 
-# echo "bsub -G team151 -o $outfile_binder_of_scores_COGS -M $step_mem  -J $name_binder_of_scores_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_binder_of_scores_COGS \\" >> $output
-# echo "--ALL_dB $ALL_dB \\" >> $output
-# echo "--VEP_CSQ $VEP_CSQ \\" >> $output
-# echo "--PCHiC $PCHiC \\" >> $output
-# echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-# echo "###################################################### COGS  #####################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-
-# Rscript_COGS=/nfs/users/nfs_m/mt19/Scripts/R/335_COGS_v2.R
-
-# COGS=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/COGS_GLOBAL.tsv')
-# type=$(echo "COGS")
-# COGS_Threshold=$(echo '0')
-# tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
-# #desiR_weights=$(echo "0.5,10,0.05,0.8,1,3")
-
-
-# outfile_COGS=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
-# touch $outfile_COGS
-# echo -n "" > $outfile_COGS
-# name_COGS=$(echo "$type""_""$Open_in_CT_threshold""_job")
-
-
-# step_mem=$(expr $mem \* 1)
-# step_pc=$(expr $pc \* 1)
-
-# echo "$mem""->""$step_mem"
-# echo "$pc""->""$step_pc"
+echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_PCHiC -M $step_mem  -J $name_binder_of_scores_unranked_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_unranked_PCHiC \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
+echo "--PCHiC_INITIAL $PCHiC_INITIAL \\" >> $output
+echo "--Trait_to_CT_table $Trait_to_CT_table \\" >> $output
+echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
-# #echo "bsub -G team151 -o $outfile_COGS -M $step_mem -w\"done($name_binder_of_scores_COGS)\" -J $name_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "bsub -G team151 -o $outfile_COGS -M $step_mem  -J $name_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-# echo "\"$Rscript $Rscript_COGS \\" >> $output
-# echo "--COGS $COGS \\" >> $output
-# echo "--COGS_Threshold $COGS_Threshold \\" >> $output
-# echo "--tracking_variants $tracking_variants \\" >> $output
-# echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+echo "###################################################### PCHiC Rank  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_PCHiC=/nfs/users/nfs_m/mt19/Scripts/R/336_Rank_PCHiC_v2.R
+
+PCHiC_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/PCHiC_GLOBAL_preranked.tsv')
+type=$(echo "PCHiC")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+desiR_weights=$(echo "0.1,10,1")
+
+
+
+outfile_PCHiC=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_PCHiC
+echo -n "" > $outfile_PCHiC
+name_PCHiC=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+echo "bsub -G team151 -o $outfile_PCHiC -M $step_mem -w\"done($name_binder_of_scores_unranked_PCHiC)\" -J $name_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_PCHiC -M $step_mem  -J $name_PCHiC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_PCHiC \\" >> $output
+echo "--PCHiC_pre_ranked $PCHiC_pre_ranked \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--desiR_weights $desiR_weights \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+
+echo "###################################################### binder_of_scores_unranked_ATAC  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_unranked_ATAC=/nfs/users/nfs_m/mt19/Scripts/R/329_binder_of_scores_unranked_ATAC_v2.R
+
+
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_unranked_ATAC")
+excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+relevant_not_relevant_weights=$(echo "1,0.01")
+ATAC_INITIAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/ATAC_Seq_Ranked_graphs.csv")
+Trait_to_Lineage_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/ATAC_scaled_trait_table_generation.txt")
+Lineage_to_Cell_table=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/ATAC_scaled_Lineage_hierarchy_generation.txt")
+
+
+
+outfile_binder_of_scores_unranked_ATAC=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_unranked_ATAC
+echo -n "" > $outfile_binder_of_scores_unranked_ATAC
+name_binder_of_scores_unranked_ATAC=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
+step_queue=$(echo "normal")
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+echo "$queue""->""$step_queue"
+
+ 
+
+echo "bsub -G team151 -o $outfile_binder_of_scores_unranked_ATAC -M $step_mem  -J $name_binder_of_scores_unranked_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $step_queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_unranked_ATAC \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
+echo "--ATAC_INITIAL $ATAC_INITIAL \\" >> $output
+echo "--Trait_to_Lineage_table $Trait_to_Lineage_table \\" >> $output
+echo "--Lineage_to_Cell_table $Lineage_to_Cell_table \\" >> $output
+echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+
+ 
+echo "###################################################### ATAC_Rank  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_ATAC_Rank=/nfs/users/nfs_m/mt19/Scripts/R/330_Rank_ATAC_v2.R
+
+ATAC_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/ATAC_GLOBAL_preranked.tsv')
+type=$(echo "ATAC_Rank")
+Open_in_CT_threshold=$(echo "0.1")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+desiR_weights=$(echo "0.5,5,0.05,0.8,1,3")
+
+
+outfile_ATAC_Rank=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+touch $outfile_ATAC_Rank
+echo -n "" > $outfile_ATAC_Rank
+name_ATAC_Rank=$(echo "$type""_""$Open_in_CT_threshold""_job")
+
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+echo "bsub -G team151 -o $outfile_ATAC_Rank -M $step_mem -w\"done($name_binder_of_scores_unranked_ATAC)\"  -J $name_ATAC_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_ATAC_Rank -M $step_mem  -J $name_ATAC_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_ATAC_Rank \\" >> $output
+echo "--ATAC_pre_ranked $ATAC_pre_ranked \\" >> $output
+echo "--Open_in_CT_threshold $Open_in_CT_threshold \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--desiR_weights $desiR_weights \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+
+echo "###################################################### multi_lineage_ATAC  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_multi_lineage_ATAC=/nfs/users/nfs_m/mt19/Scripts/R/331_Rank_multi_lineage_ATAC.R
+
+ATAC_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/ATAC_GLOBAL_Ranked.tsv')
+type=$(echo "multi_lineage_ATAC")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+desiR_weights=$(echo "0.9,2.5,0.1,0.7,3,1")
+
+
+outfile_multi_lineage_ATAC=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+touch $outfile_multi_lineage_ATAC
+echo -n "" > $outfile_multi_lineage_ATAC
+name_multi_lineage_ATAC=$(echo "$type""_""$Open_in_CT_threshold""_job")
+
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+echo "bsub -G team151 -o $outfile_multi_lineage_ATAC -M $step_mem -w\"done($name_ATAC_Rank)\" -J $name_multi_lineage_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_multi_lineage_ATAC -M $step_mem  -J $name_multi_lineage_ATAC -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_multi_lineage_ATAC \\" >> $output
+echo "--ATAC_ranked $ATAC_ranked \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--desiR_weights $desiR_weights \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+
+
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $outpu
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "####################################################### GENE BASED FEATURES #############################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+
+echo "###################################################### binder_of_scores_GENE_EXP  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_GENE_EXP=/nfs/users/nfs_m/mt19/Scripts/R/338_binder_of_scores_Gene_EXP.R
+
+
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_GENE_EXP")
+excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
+PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
+GENE_EXP=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/BP_Iso_Reanalysis/OLD/GENE_EXP_Harmonization.tsv")
+TOME_correspondence=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/ALL_dB/Correspondence_phenotype_TOME.txt")
+
+
+
+
+
+outfile_binder_of_scores_GENE_EXP=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_GENE_EXP
+echo -n "" > $outfile_binder_of_scores_GENE_EXP
+name_binder_of_scores_GENE_EXP=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 4)
+step_pc=$(expr $pc \* 4)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+ 
+
+echo "bsub -G team151 -o $outfile_binder_of_scores_GENE_EXP -M $step_mem  -J $name_binder_of_scores_GENE_EXP -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_GENE_EXP \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--VEP_CSQ $VEP_CSQ \\" >> $output
+echo "--PCHiC $PCHiC \\" >> $output
+echo "--GENE_EXP $GENE_EXP \\" >> $output
+echo "--TOME_correspondence $TOME_correspondence \\" >> $output
+echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+echo "###################################################### GENE_EXP_Rank  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_GENE_EXP_Rank=/nfs/users/nfs_m/mt19/Scripts/R/339_Gene_EXP.R
+
+GENE_EXP_pre_ranked=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/GENE_EXP_GLOBAL.tsv')
+type=$(echo "GENE_EXP_Rank")
+relevant_not_relevant_weights=$(echo "1,0.01")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+desiR_weights=$(echo "0.1,20,1")
+
+
+outfile_GENE_EXP_Rank=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_GENE_EXP_Rank
+echo -n "" > $outfile_GENE_EXP_Rank
+name_GENE_EXP_Rank=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 3)
+step_pc=$(expr $pc \* 3)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+echo "bsub -G team151 -o $outfile_GENE_EXP_Rank -M $step_mem -w\"done($name_binder_of_scores_GENE_EXP)\"  -J $name_GENE_EXP_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_GENE_EXP_Rank -M $step_mem  -J $name_GENE_EXP_Rank -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_GENE_EXP_Rank \\" >> $output
+echo "--GENE_EXP_pre_ranked $GENE_EXP_pre_ranked \\" >> $output
+echo "--relevant_not_relevant_weights $relevant_not_relevant_weights \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--desiR_weights $desiR_weights \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+echo "###################################################### binder_of_scores_GENE_PLOEUF  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_GENE_PLOEUF=/nfs/users/nfs_m/mt19/Scripts/R/350_binder_of_scores_pLOEUF.R
+
+
+type=$(echo "binder_of_scores_GENE_PLOEUF")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
+PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
+GENE_PLOEUF=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/pLOEUF/gnomad.v2.1.1.lof_metrics.by_gene.txt")
+TRANSCRIPTS_table=$(echo "/nfs/users/nfs_m/mt19/RareVar_Dragana/Homo_sapiens.GRCh37.87_Transcripts_table.txt")
+
+
+
+outfile_binder_of_scores_GENE_PLOEUF=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_GENE_PLOEUF
+echo -n "" > $outfile_binder_of_scores_GENE_PLOEUF
+name_binder_of_scores_GENE_PLOEUF=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+ 
+
+echo "bsub -G team151 -o $outfile_binder_of_scores_GENE_PLOEUF -M $step_mem  -J $name_binder_of_scores_GENE_PLOEUF -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_GENE_PLOEUF \\" >> $output
+echo "--VEP_CSQ $VEP_CSQ \\" >> $output
+echo "--PCHiC $PCHiC \\" >> $output
+echo "--GENE_PLOEUF $GENE_PLOEUF \\" >> $output
+echo "--TRANSCRIPTS_table $TRANSCRIPTS_table \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+
+
+echo "###################################################### binder_of_scores_COGS  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_binder_of_scores_COGS=/nfs/users/nfs_m/mt19/Scripts/R/334_binder_of_scores_COGS.R
+
+
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+type=$(echo "binder_of_scores_COGS")
+excluded_phenotypes=$(echo "wbc,eo_p,mono_p,neut_p,lymph_p,baso_p")
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/VEP_consequence_graphs.csv')
+PCHiC=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv_tables/PCHIC_ChicagoScore_graphs.csv')
+
+
+outfile_binder_of_scores_COGS=$(echo "$output_dir""outfile""_""$type"".out")
+touch $outfile_binder_of_scores_COGS
+echo -n "" > $outfile_binder_of_scores_COGS
+name_binder_of_scores_COGS=$(echo "$type""_job")
+
+
+step_mem=$(expr $mem \* 2)
+step_pc=$(expr $pc \* 2)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+ 
+
+echo "bsub -G team151 -o $outfile_binder_of_scores_COGS -M $step_mem  -J $name_binder_of_scores_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_binder_of_scores_COGS \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--VEP_CSQ $VEP_CSQ \\" >> $output
+echo "--PCHiC $PCHiC \\" >> $output
+echo "--excluded_phenotypes $excluded_phenotypes \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
+
+echo "###################################################### COGS  #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_COGS=/nfs/users/nfs_m/mt19/Scripts/R/335_COGS_v2.R
+
+COGS=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/COGS_GLOBAL.tsv')
+type=$(echo "COGS")
+COGS_Threshold=$(echo '0')
+tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
+#desiR_weights=$(echo "0.5,10,0.05,0.8,1,3")
+
+
+outfile_COGS=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+touch $outfile_COGS
+echo -n "" > $outfile_COGS
+name_COGS=$(echo "$type""_""$Open_in_CT_threshold""_job")
+
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+
+echo "bsub -G team151 -o $outfile_COGS -M $step_mem -w\"done($name_binder_of_scores_COGS)\" -J $name_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_COGS -M $step_mem  -J $name_COGS -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_COGS \\" >> $output
+echo "--COGS $COGS \\" >> $output
+echo "--COGS_Threshold $COGS_Threshold \\" >> $output
+echo "--tracking_variants $tracking_variants \\" >> $output
+echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 
@@ -895,10 +940,6 @@ done
 
 
 
-bash $output
-exit
-
-
 
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
@@ -953,9 +994,9 @@ echo "$mem""->""$step_mem"
 echo "$pc""->""$step_pc"
  
 
-#echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_binder_of_scores_GWAS) && done($name_binder_of_scores_GENE_PLOEUF) && done($$name_binder_of_scores_constraint_Z) && done($name_ATAC_Rank) && done($name_multi_lineage_ATAC) && done($name_SpliceAI) && done($name_CADD) && done($name_NCBoost) && done($name_COGS) && done($name_PCHiC) && done($name_chromstates) && done($name_GENE_EXP_Rank)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_binder_of_scores_GWAS) && done($name_binder_of_scores_GENE_PLOEUF) && done($$name_binder_of_scores_constraint_Z) && done($name_ATAC_Rank) && done($name_multi_lineage_ATAC) && done($name_SpliceAI) && done($name_CADD) && done($name_NCBoost) && done($name_COGS) && done($name_PCHiC) && done($name_chromstates) && done($name_GENE_EXP_Rank)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
 #echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_COGS)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
-echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem  -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+#echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem  -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
 echo "\"$Rscript $Rscript_Prepared_files_and_add_annotation_layer \\" >> $output
 echo "--ATAC_data $ATAC_data \\" >> $output
 echo "--multi_ATAC_data $multi_ATAC_data \\" >> $output
@@ -1059,3 +1100,4 @@ echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 bash $output
+ 
