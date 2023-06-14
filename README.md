@@ -1187,3 +1187,11 @@ subset_variables_2=$(echo "COGS,oe_lof,Rank_GENE_EXP")
 ################### Code Main points:
 
 ################### Dotplot for the minus logpval values and violin plots to show the distributions
+
+# rclone lines
+
+bsub -G team151 -o menial.out -M 4000 -R"select[mem >4000] rusage[mem=4000] span[hosts=1]" -n1 -q normal "rclone copyto desiR_graphs/ mt19_g_drive:/Project_WetLab_Projects/V2F_paper/Methods/Rankings_auxiliary_files/desiR_graphs/ --drive-shared-with-me;rclone copyto COGS_graphs/  mt19_g_drive:/Project_WetLab_Pro\
+jects/V2F_paper/Methods/Rankings_auxiliary_files/COGS_graphs/ --drive-shared-with-me;rclone copy Table_S1.tsv  mt19_g_drive:/Project_WetLab_Projects/V2F_paper/TABLES/ --drive-shared-with-me;rclone copy Table_S2.tsv  mt19_g_drive:/Project_WetLab_Projects/V2F_paper/TABLES/ --drive-shared-with-me;rclone copyto Pat\
+hogenic_variant_comparison_0.5/ mt19_g_drive:/Project_WetLab_Projects/V2F_paper/RESULTS/Pathogenic_variant_comparison_0.5/ --drive-shared-with-me;rclone copyto Pathogenic_variant_comparison_0.9/ mt19_g_drive:/Project_WetLab_Projects/V2F_paper/RESULTS/Pathogenic_variant_comparison_0.9/ --drive-shared-with-me;rcl\
+one copyto Pathogenic_variant_comparison_0/ mt19_g_drive:/Project_WetLab_Projects/V2F_paper/RESULTS/Pathogenic_variant_comparison_0/ --drive-shared-with-me"
+

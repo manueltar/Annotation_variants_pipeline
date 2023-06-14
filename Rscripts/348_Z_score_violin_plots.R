@@ -439,8 +439,8 @@ Stats_function = function(option_list)
     if(category_sel == "Fig1_Annot_Category")
     {
       
-      Stats_file_single_sel<-Stats_file_single_sel[which(Stats_file_single_sel$category1 == "RV_NC_highPP_highEffectSize" |
-                                                           Stats_file_single_sel$category2 == "RV_NC_highPP_highEffectSize"),]
+      Stats_file_single_sel<-Stats_file_single_sel[which(Stats_file_single_sel$category1 == "index_variants" |
+                                                           Stats_file_single_sel$category2 == "index_variants"),]
       
     }
     

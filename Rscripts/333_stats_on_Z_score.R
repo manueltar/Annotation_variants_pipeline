@@ -602,8 +602,8 @@ Stats_function = function(option_list)
       if(category_sel == "Fig1_Annot_Category")
       {
 
-        Wilcox_df_3<-Wilcox_df_3[which(Wilcox_df_3$category1 == "RV_NC_highPP_highEffectSize" |
-                                                             Wilcox_df_3$category2 == "RV_NC_highPP_highEffectSize"),]
+        Wilcox_df_3<-Wilcox_df_3[which(Wilcox_df_3$category1 == "index_variants" |
+                                                             Wilcox_df_3$category2 == "index_variants"),]
 
       }
       

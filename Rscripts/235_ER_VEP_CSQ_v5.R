@@ -155,8 +155,7 @@ data_wrangling_graph_and_stats = function(option_list)
   
   Fig1_subset$variable<-as.character(Fig1_subset$variable)
   
-  Fig1_subset$variable[which(Fig1_subset$variable == "RV_NC_highPP_highEffectSize")]<-"index_variants"
-  
+
   cat("Fig1_subset_0\n")
   cat(str(Fig1_subset))
   cat("\n")
