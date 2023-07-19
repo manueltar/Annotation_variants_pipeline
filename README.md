@@ -1,3 +1,7 @@
+# Manual curation
+
+$ bash ~/Scripts/Wraper_scripts/304_Figure4_pannels_v3.sh /lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/ 4000 1 normal
+
 # Annotation_variants_pipeline
 
 
