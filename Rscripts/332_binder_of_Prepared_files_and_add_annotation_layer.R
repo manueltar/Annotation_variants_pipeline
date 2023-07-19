@@ -62,23 +62,6 @@ Data_wrangling = function(option_list)
   cat(sprintf(as.character(tracking_variants)))
   cat("\n")
   
-  #### RMV DGKQ ----
-  
-  
-  RMV_common = opt$RMV_common
-  
-  cat("RMV_common_\n")
-  cat(sprintf(as.character(RMV_common)))
-  cat("\n")
-  
-  #### RMV DGKQ ----
-  
-  
-  RMV_labels = unlist(strsplit(opt$RMV_labels, split=","))
-  
-  cat("RMV_labels_\n")
-  cat(sprintf(as.character(RMV_labels)))
-  cat("\n")
   
   #### Read ATAC_data file ----
   
@@ -405,114 +388,94 @@ Data_wrangling = function(option_list)
   cat("\n")
   
  
-  ### Read Table_S4----
+  ### Read Table_S6----
   
   
-  Table_S4<-as.data.frame(readRDS(file=opt$Table_S4) , stringsAsFactors=F)
+  Table_S6<-as.data.frame(readRDS(file=opt$Table_S6) , stringsAsFactors=F)
   
-  cat("Table_S4_0\n")
-  cat(str(Table_S4))
-  cat("\n")
-  
-  Table_S4<-Table_S4[-which(Table_S4$VAR == RMV_common),]
-  
-  cat("Table_S4_RMV_common\n")
-  cat(str(Table_S4))
+  cat("Table_S6_0\n")
+  cat(str(Table_S6))
   cat("\n")
   
   
-  indx.int<-c(which(colnames(Table_S4) == "VAR"),which(colnames(Table_S4) == "Mechanistic_Class"),which(colnames(Table_S4) == "Manual_curation"),which(colnames(Table_S4) == "MPRA_CLASS"),which(colnames(Table_S4) == "genIE_CLASS"),which(colnames(Table_S4) == "Multi_Lineage"))
+  indx.int<-c(which(colnames(Table_S6) == "VAR"),which(colnames(Table_S6) == "Mechanistic_Class"),which(colnames(Table_S6) == "Manual_curation"),which(colnames(Table_S6) == "MPRA_CLASS"),which(colnames(Table_S6) == "genIE_CLASS"),which(colnames(Table_S6) == "Multi_Lineage"))
   
-  Table_S4_subset<-unique(Table_S4[,indx.int])
+  Table_S6_subset<-unique(Table_S6[,indx.int])
   
-  cat("Table_S4_subset_0\n")
-  cat(str(Table_S4_subset))
+  cat("Table_S6_subset_0\n")
+  cat(str(Table_S6_subset))
   cat("\n")
-  cat(str(unique(Table_S4_subset$VAR)))
+  cat(str(unique(Table_S6_subset$VAR)))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Mechanistic_Class)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Mechanistic_Class)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Mechanistic_Class))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Mechanistic_Class))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Manual_curation)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Manual_curation)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Manual_curation))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Manual_curation))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$MPRA_CLASS)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$MPRA_CLASS)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$MPRA_CLASS))))
+  cat(sprintf(as.character(summary(Table_S6_subset$MPRA_CLASS))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$genIE_CLASS)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$genIE_CLASS)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$genIE_CLASS))))
+  cat(sprintf(as.character(summary(Table_S6_subset$genIE_CLASS))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Multi_Lineage)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Multi_Lineage)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Multi_Lineage))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Multi_Lineage))))
   cat("\n")
   
   
   
-  Table_S4_subset$MPRA_CLASS_2<-revalue(Table_S4_subset$MPRA_CLASS,
-                                        c("NO_enhancer_activity" = "no_hit",
-                                          "AT_LEAST_1_TILE_with_enhancer_activity" = "no_hit",
-                                          "AT_LEAST_1_TILE_with_E_Plus_ASE_activity" = "hit"))
-  
-  
-  Table_S4_subset$MPRA_CLASS_2[which(Table_S4_subset$MPRA_CLASS_2 == RMV_labels[1])]<-NA
-  
-  Table_S4_subset$genIE_CLASS[which(Table_S4_subset$genIE_CLASS == RMV_labels[2])]<-NA
-  
-  Table_S4_subset$Mechanistic_Class[which(Table_S4_subset$Mechanistic_Class == RMV_labels[3])]<-NA
-  
-  Table_S4_subset$Manual_curation[which(Table_S4_subset$Manual_curation == RMV_labels[3])]<-NA
-  
-  Table_S4_subset$M_and_M<-interaction(Table_S4_subset$Mechanistic_Class,Table_S4_subset$Manual_curation, sep="|",lex.order = T)#, na.omit=T)
+  Table_S6_subset$M_and_M<-interaction(Table_S6_subset$Mechanistic_Class,Table_S6_subset$Manual_curation, sep="|",lex.order = T)#, na.omit=T)
   
   
   
-  Table_S4_subset<-droplevels(Table_S4_subset)
+  Table_S6_subset<-droplevels(Table_S6_subset)
   
   
-  cat("Table_S4_subset_1\n")
-  cat(str(Table_S4_subset))
+  cat("Table_S6_subset_1\n")
+  cat(str(Table_S6_subset))
   cat("\n")
-  cat(str(unique(Table_S4_subset$VAR)))
+  cat(str(unique(Table_S6_subset$VAR)))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Mechanistic_Class)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Mechanistic_Class)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Mechanistic_Class))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Mechanistic_Class))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Manual_curation)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Manual_curation)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Manual_curation))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Manual_curation))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$MPRA_CLASS)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$MPRA_CLASS)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$MPRA_CLASS))))
+  cat(sprintf(as.character(summary(Table_S6_subset$MPRA_CLASS))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$genIE_CLASS)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$genIE_CLASS)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$genIE_CLASS))))
+  cat(sprintf(as.character(summary(Table_S6_subset$genIE_CLASS))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$Multi_Lineage)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$Multi_Lineage)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$Multi_Lineage))))
+  cat(sprintf(as.character(summary(Table_S6_subset$Multi_Lineage))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$M_and_M)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$M_and_M)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$M_and_M))))
+  cat(sprintf(as.character(summary(Table_S6_subset$M_and_M))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S4_subset$MPRA_CLASS_2)))))
+  cat(sprintf(as.character(names(summary(Table_S6_subset$MPRA_CLASS_2)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S4_subset$MPRA_CLASS_2))))
+  cat(sprintf(as.character(summary(Table_S6_subset$MPRA_CLASS_2))))
   cat("\n")
  
   
   #### Merge all labels ----
   
   Table_of_labels<-merge(VAR_Prioritization_dB_subset,
-                         Table_S4_subset,
+                         Table_S6_subset,
                          by="VAR",
                          all=T)
  
@@ -570,7 +533,7 @@ main = function() {
             paste(cmd_line[6:length(cmd_line)], collapse = " "),
             "\n\n"))
   option_list <- list(
-    make_option(c("--Table_S4"), type="character", default=NULL, 
+    make_option(c("--Table_S6"), type="character", default=NULL, 
                 metavar="type", 
                 help="Path to tab-separated input file listing regions to analyze. Required."),
     make_option(c("--VAR_Prioritization_dB"), type="character", default=NULL, 

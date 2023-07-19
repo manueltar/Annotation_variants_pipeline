@@ -23,15 +23,90 @@ Rscript=/software/R-4.1.0/bin/Rscript
 
 
 
+echo "###################################################### MASTER_LABELLING ########### MASTER_LABELLING ########### MASTER_LABELLING #####################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+
+Rscript_ER_Labelling=/nfs/users/nfs_m/mt19/Scripts/R/235_ER_Labelling_v9.R
 
 
 
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "####################################################### MSC GRAPH #############################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
-# echo "#########################################################################################################################################################################"  >> $output
+MPRA_Tier_1=$(echo "E_Plus_ASE_ACTIVE_AT_LEAST_1")
+genIE_Tier_1=$(echo "Tier_del")
+
+batch=$(echo "MPRA_""$MPRA_Tier_1""_genIE_""$genIE_Tier_1")
+finemap_prob_Threshold=$(echo '0.1')
+
+echo "BATCH:$batch"
+echo "finemap_prob_Threshold:$finemap_prob_Threshold"
+
+maf_Threshold=$(echo '0.03')
+Info_Score_Threshold=$(echo '0.8')
+Prob_Threshold=$(echo '0.9')
+
+
+ALL_dB_Hannes=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/mt19/ALL_db.tsv')
+ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
+path_Patrick=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/')
+
+
+
+
+type=$(echo "ER_Labelling")
+Initial_Selection=$(echo "$output_dir""ER_Labelling_Initial_Selection.rds")
+
+outfile_ER_Labelling=$(echo "$output_dir""outfile_""$type""_""$batch""_""$finemap_prob_Threshold"".out")
+touch $outfile_ER_Labelling
+echo -n "" > $outfile_ER_Labelling
+name_ER_Labelling=$(echo "$type""_""$batch""_""$finemap_prob_Threshold""_job")
+
+
+MPRA_Tier_0_name=$MPRA_Tier_1
+MPRA_Tier_0_name=$(echo $MPRA_Tier_0_name|sed -e 's/_AT_LEAST_.*$/_0/g')
+
+echo "$MPRA_Tier_0_name"
+
+MPRA_Tier_0=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NEW_MPRA/GLOBAL_ANALYSIS_Feb_2022_FC01/""$MPRA_Tier_0_name"".rds")
+MPRA_Tier_1=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NEW_MPRA/GLOBAL_ANALYSIS_Feb_2022_FC01/""$MPRA_Tier_1"".rds")
+genIE_input=$(echo '/nfs/users/nfs_m/mt19/analysis_genIE/input.csv')
+genIE_RESULTS=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/genIE_analysis/GLOBAL_ANALYSIS/genIE_Tiers_DEF.rds")
+
+
+paleo_file=$(echo "/nfs/users/nfs_m/mt19/RareVar_2019/varbase190212_full.csv")
+
+step_mem=$(expr $mem \* 1)
+step_pc=$(expr $pc \* 1)
+
+echo "$mem""->""$step_mem"
+echo "$pc""->""$step_pc"
+
+
+
+echo "bsub -G team151 -o $outfile_ER_Labelling -M $step_mem  -J $name_ER_Labelling -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "\"$Rscript $Rscript_ER_Labelling \\" >> $output
+echo "--ALL_dB $ALL_dB \\" >> $output
+echo "--ALL_dB_Hannes $ALL_dB_Hannes \\" >> $output
+echo "--paleo_file $paleo_file \\" >> $output
+echo "--path_Patrick $path_Patrick \\" >> $output
+echo "--MPRA_Tier_0 $MPRA_Tier_0 \\" >> $output
+echo "--MPRA_Tier_1 $MPRA_Tier_1 \\" >> $output
+echo "--genIE_RESULTS $genIE_RESULTS \\" >> $output
+echo "--genIE_input $genIE_input \\" >> $output
+echo "--maf_Threshold $maf_Threshold \\" >> $output
+echo "--Info_Score_Threshold $Info_Score_Threshold \\" >> $output
+echo "--Prob_Threshold $Prob_Threshold \\" >> $output
+echo "--Initial_Selection $Initial_Selection \\" >> $output
+echo "--finemap_prob_Threshold $finemap_prob_Threshold \\" >> $output
+echo "--type $type --out $output_dir\"" >> $output
+
+
+
+
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "####################################################### MSC GRAPH #############################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
+echo "#########################################################################################################################################################################"  >> $output
 
 
 
@@ -41,16 +116,19 @@ VEP_CSQ=$(echo '/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Variant_csv
 ALL_dB=$(echo '/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/Explore_Patricks_tables/ALL_db.tsv')
 CSQ_colors=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/NEW_MPRA/df_CSQ_colors.rds")
 
-Initial_Selection_WITH_CSQ_labels=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/""ER_Labelling_Initial_Selection_with_CSQ_labels.rds")
+
+Initial_Selection_WITH_CSQ_labels=$(echo "$output_dir""ER_Labelling_Initial_Selection_with_CSQ_labels.rds")
+Categories_colors=$(echo "$output_dir""ER_Labelling_Categories_colors.rds")
+
 type=$(echo "VEP_CSQ")
 
 outfile_ER_VEP_CSQ=$(echo "$output_dir""outfile""_""$type"".out")
 touch $outfile_ER_VEP_CSQ
 echo -n "" > $outfile_ER_VEP_CSQ
 name_ER_VEP_CSQ=$(echo "$type""_job")
-Categories_colors=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/""ER_Labelling_Categories_colors.rds")
 
-echo "bsub -G team151 -o $outfile_ER_VEP_CSQ -M $mem  -J $name_ER_VEP_CSQ -R\"select[mem>=$mem] rusage[mem=$mem] span[hosts=1]\" -n$pc -q $queue -- \\" >> $output
+
+echo "bsub -G team151 -o $outfile_ER_VEP_CSQ -M $mem -w\"done($name_ER_Labelling)\" -J $name_ER_VEP_CSQ -R\"select[mem>=$mem] rusage[mem=$mem] span[hosts=1]\" -n$pc -q $queue -- \\" >> $output
 echo "\"$Rscript $Rscript_VEP_CSQ \\" >> $output
 echo "--Initial_Selection $Initial_Selection_WITH_CSQ_labels \\" >> $output
 echo "--Categories_colors $Categories_colors \\" >> $output
@@ -64,10 +142,8 @@ echo "--type $type --out $output_dir\"" >> $output
 
 
 
-
-
 echo "#########################################################################################################################################################################"  >> $output
-echo "#########################################################################################################################################################################"  >> $outpu
+echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
@@ -622,7 +698,7 @@ echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
 echo "#########################################################################################################################################################################"  >> $output
-echo "#########################################################################################################################################################################"  >> $outpu
+echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
@@ -898,7 +974,7 @@ do
     Rscript_compare_pathogenic_vs_prioritised_variants=/nfs/users/nfs_m/mt19/Scripts/R/352_Comparison_between_pathogenic_and_prioritised_variants.R
 
     List_of_pathogenic_variants=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Pathogenic_variants.txt")
-    VAR_Prioritization_dB=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/ER_Labelling_Initial_Selection.rds")
+    VAR_Prioritization_dB=$(echo "$output_dir""ER_Labelling_Initial_Selection.rds")
     Table_S4=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/FINAL_RESULTS/Fig4_pannels/Supp_Table_4_CURATED_Plus_phenotypes.rds")
     RMV_common=$(echo "chr4_1008212_C_T")
     RMV_labels=$(echo 'NOT_SCREENED_MPRA,NOT_SCREENED_genIE,No_RNA_Seq_HET_carriers')
@@ -922,7 +998,7 @@ do
     echo "$pc""->""$step_pc"
     
 
-    echo "bsub -G team151 -o $outfile_compare_pathogenic_vs_prioritised_variants -M $step_mem -w\"done($name_binder_of_abs_finemap_for_Pathogenic_variant_comparison)\" -J $name_compare_pathogenic_vs_prioritised_variants -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+    echo "bsub -G team151 -o $outfile_compare_pathogenic_vs_prioritised_variants -M $step_mem -w\"done($name_ER_Labelling) && done($name_binder_of_abs_finemap_for_Pathogenic_variant_comparison)\" -J $name_compare_pathogenic_vs_prioritised_variants -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
     #echo "bsub -G team151 -o $outfile_compare_pathogenic_vs_prioritised_variants -M $step_mem  -J $name_compare_pathogenic_vs_prioritised_variants -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
     echo "\"$Rscript $Rscript_compare_pathogenic_vs_prioritised_variants \\" >> $output
     echo "--List_of_pathogenic_variants $List_of_pathogenic_variants \\" >> $output
@@ -941,7 +1017,7 @@ done
 
 
 
-echo "#########################################################################################################################################################################"  >> $output
+echo  "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
@@ -971,10 +1047,9 @@ GWAS_GLOBAL_per_traits=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL
 MAF_GLOBAL=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/MAF_GLOBAL.tsv")
 
 
-VAR_Prioritization_dB=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/mt19/V2F_paper/MPRA_E_Plus_ASE_ACTIVE_AT_LEAST_1_genIE_Tier_del_0.1/ER_Labelling_Initial_Selection.rds")
-Table_S4=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/FINAL_RESULTS/Fig4_pannels/Supp_Table_4_CURATED_Plus_phenotypes.rds")
-RMV_common=$(echo "chr4_1008212_C_T")
-RMV_labels=$(echo 'NOT_SCREENED_MPRA,NOT_SCREENED_genIE,No_RNA_Seq_HET_carriers')
+VAR_Prioritization_dB=$(echo "$output_dir""ER_Labelling_Initial_Selection.rds")
+Table_S6=$(echo "/lustre/scratch123/hgi/mdt1/teams/soranzo/projects/VARIANT_INTERPRETATION/OVERHAUL_INTERVAL/Table_S6_Manual_curation.rds")
+
 
 type=$(echo "Prepared_files_and_add_annotation_layer")
 tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_T_C,chr18_60920854_C_T,chr3_128317978_C_T,chr3_128322617_G_A,chr3_184091102_T_G,chr17_38764524_T_A,chr3_71355240_G_C,chr16_86016328_C_T")
@@ -994,7 +1069,7 @@ echo "$mem""->""$step_mem"
 echo "$pc""->""$step_pc"
  
 
-echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_binder_of_scores_GWAS) && done($name_binder_of_scores_GENE_PLOEUF) && done($$name_binder_of_scores_constraint_Z) && done($name_ATAC_Rank) && done($name_multi_lineage_ATAC) && done($name_SpliceAI) && done($name_CADD) && done($name_NCBoost) && done($name_COGS) && done($name_PCHiC) && done($name_chromstates) && done($name_GENE_EXP_Rank)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
+echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_ER_Labelling) && done($name_binder_of_scores_GWAS) && done($name_binder_of_scores_GENE_PLOEUF) && done($name_binder_of_scores_constraint_Z) && done($name_ATAC_Rank) && done($name_multi_lineage_ATAC) && done($name_SpliceAI) && done($name_CADD) && done($name_NCBoost) && done($name_COGS) && done($name_PCHiC) && done($name_chromstates) && done($name_GENE_EXP_Rank)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
 #echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem -w\"done($name_COGS)\" -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
 #echo "bsub -G team151 -o $outfile_Prepared_files_and_add_annotation_layer -M $step_mem  -J $name_Prepared_files_and_add_annotation_layer -R\"select[model==Intel_Platinum]\" -R\"select[mem>=$step_mem] rusage[mem=$step_mem] span[hosts=1]\" -n$step_pc -q $queue -- \\" >> $output
 echo "\"$Rscript $Rscript_Prepared_files_and_add_annotation_layer \\" >> $output
@@ -1012,10 +1087,8 @@ echo "--GENE_EXP $GENE_EXP \\" >> $output
 echo "--PCHiC $PCHiC \\" >> $output
 echo "--chromstates $chromstates \\" >> $output
 echo "--VAR_Prioritization_dB $VAR_Prioritization_dB \\" >> $output
-echo "--Table_S4 $Table_S4 \\" >> $output
+echo "--Table_S6 $Table_S6 \\" >> $output
 echo "--tracking_variants $tracking_variants \\" >> $output
-echo "--RMV_common $RMV_common \\" >> $output
-echo "--RMV_labels $RMV_labels \\" >> $output
 echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
 
@@ -1056,10 +1129,13 @@ echo "--Table_of_labels $Table_of_labels \\" >> $output
 echo "--tracking_variants $tracking_variants \\" >> $output
 echo "--type $type --out $MASTER_ROUTE\"" >> $output
 
+
+
+
 echo "###################################################### Z_score_violin_plots  #####################################################################"  >> $output
 echo "#########################################################################################################################################################################"  >> $output
 
-Rscript_Stats_Z_score=/nfs/users/nfs_m/mt19/Scripts/R/348_Z_score_violin_plots.R
+Rscript_Stats_Z_score=/nfs/users/nfs_m/mt19/Scripts/R/348_Z_score_violin_plots_v2.R
 
 Master_file=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Master_file_scores.rds")
 Table_of_labels=$(echo "/lustre/scratch126/humgen/teams/soranzo/users/ALL_dB/Allelic_Series_csv_tables_AS_DEFINITIVE/new_desiR_scores/Table_of_labels.rds")

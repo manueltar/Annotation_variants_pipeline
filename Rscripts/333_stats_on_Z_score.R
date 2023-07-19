@@ -91,9 +91,9 @@ Stats_function = function(option_list)
   cat("\n")
   cat(sprintf(as.character(summary(Table_of_labels$Fig1_Annot_Category))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_of_labels$MPRA_CLASS_2)))))
+  cat(sprintf(as.character(names(summary(Table_of_labels$MPRA_CLASS)))))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_of_labels$MPRA_CLASS_2))))
+  cat(sprintf(as.character(summary(Table_of_labels$MPRA_CLASS))))
   cat("\n")
   cat(sprintf(as.character(names(summary(Table_of_labels$genIE_CLASS)))))
   cat("\n")
@@ -108,12 +108,27 @@ Stats_function = function(option_list)
   cat(sprintf(as.character(summary(Table_of_labels$Multi_Lineage))))
   cat("\n")
   
+  levels_MPRA_CLASS_selected<-levels(Table_of_labels$MPRA_CLASS)[c(1,2)]
+  
+  cat("levels_MPRA_CLASS_selected\n")
+  cat(sprintf(as.character(levels_MPRA_CLASS_selected)))
+  cat("\n")
+  
+  levels_M_and_M_selected<-levels(Table_of_labels$M_and_M)[c(1,13)]
+  
+  cat("levels_M_and_M_selected\n")
+  cat(sprintf(as.character(levels_M_and_M_selected)))
+  cat("\n")
+  
+  
+  
+  
   ############## STATS LOOP -----------------
   
   
   ####   LOOP Through variables ----
   
-  category_vector<-c("Fig1_Annot_Category","MPRA_CLASS_2","M_and_M","Multi_Lineage")
+  category_vector<-c("Fig1_Annot_Category","MPRA_CLASS","M_and_M","Multi_Lineage")
   
   
   List_DEF<-list()
@@ -202,22 +217,22 @@ Stats_function = function(option_list)
     
     if(category_sel == "Multi_Lineage")
     {
-      Figure_4_categories_of_M_and_M<-c("Transcriptional_Regulation|R_in_candidate","Alternative_Transcript_Usage|R_in_candidate","Transcriptional_Regulation_and_ATU|R_in_candidate")
-      
-      Table_of_labels_subset_restricted<-Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$M_and_M%in%Figure_4_categories_of_M_and_M),]
-      
-      if(CONDITION_DEBUG == 1)
-      {
-        cat("Table_of_labels_subset_restricted_SPECIAL\n")
-        cat(str(Table_of_labels_subset_restricted))
-        cat("\n")
-        cat(str(unique(Table_of_labels_subset_restricted$VAR)))
-        cat("\n")
-        cat(sprintf(as.character(names(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset])))))
-        cat("\n")
-        cat(sprintf(as.character(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset]))))
-        cat("\n")
-      }
+      # Figure_4_categories_of_M_and_M<-c("Transcriptional_Regulation|R_in_candidate","Alternative_Transcript_Usage|R_in_candidate","Transcriptional_Regulation_and_ATU|R_in_candidate")
+      # 
+      # Table_of_labels_subset_restricted<-Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$M_and_M%in%Figure_4_categories_of_M_and_M),]
+      # 
+      # if(CONDITION_DEBUG == 1)
+      # {
+      #   cat("Table_of_labels_subset_restricted_SPECIAL\n")
+      #   cat(str(Table_of_labels_subset_restricted))
+      #   cat("\n")
+      #   cat(str(unique(Table_of_labels_subset_restricted$VAR)))
+      #   cat("\n")
+      #   cat(sprintf(as.character(names(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset])))))
+      #   cat("\n")
+      #   cat(sprintf(as.character(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset]))))
+      #   cat("\n")
+      # }
       
       
      # quit(status = 1) 
@@ -225,10 +240,11 @@ Stats_function = function(option_list)
       
       if(category_sel == "M_and_M")
       {
-        Figure_4_categories_of_M_and_M<-c('Transcriptional_Regulation|R_in_candidate','No_Regulation_Detected|Unknown_mechanism','No_Regulation_Detected|Different_RNAseq_readout_needed')
         
-        Table_of_labels_subset_restricted<-Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$M_and_M%in%Figure_4_categories_of_M_and_M),]
         
+
+        Table_of_labels_subset_restricted<-droplevels(Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$M_and_M%in%levels_M_and_M_selected),])
+
         if(CONDITION_DEBUG == 1)
         {
           cat("Table_of_labels_subset_restricted_SPECIAL\n")
@@ -243,10 +259,28 @@ Stats_function = function(option_list)
         }
       }else{
         
-        # Do nothing
-        
+        if(category_sel == "MPRA_CLASS")
+        {
+
+          Table_of_labels_subset_restricted<-droplevels(Table_of_labels_subset_restricted[which(Table_of_labels_subset_restricted$MPRA_CLASS%in%levels_MPRA_CLASS_selected),])
+          
+          if(CONDITION_DEBUG == 1)
+          {
+            cat("Table_of_labels_subset_restricted_SPECIAL\n")
+            cat(str(Table_of_labels_subset_restricted))
+            cat("\n")
+            cat(str(unique(Table_of_labels_subset_restricted$VAR)))
+            cat("\n")
+            cat(sprintf(as.character(names(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset])))))
+            cat("\n")
+            cat(sprintf(as.character(summary(Table_of_labels_subset_restricted[,indx.category_sel_subset]))))
+            cat("\n")
+          }
+        }else{
+          # Do nothing
+        }#category_sel == "MPRA_CLASS"
       }#category_sel == "M_and_M"
-    }
+    }#category_sel == "Multi_Lineage"
       
     
     
@@ -632,12 +666,12 @@ Stats_function = function(option_list)
     
     
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "Fig1_Annot_Category")]<-"Figure_1"
-    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "MPRA_CLASS_2")]<-"Figure_S2"
-    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "M_and_M")]<-"Figure_S4"
+    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "MPRA_CLASS")]<-"Figure_S2"
+    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "M_and_M")]<-"Comparison_Manual_curation"
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "Multi_Lineage")]<-"Figure_5"
     
     Wilcox_df_4$Related_figure<-factor(Wilcox_df_4$Related_figure,
-                                       levels=c("Figure_1","Figure_S2","Figure_S4","Figure_5"),
+                                       levels=c("Figure_1","Figure_S2","Comparison_Manual_curation","Figure_5"),
                                        ordered=T)
     
     cat("Wilcox_df_4_1\n")
