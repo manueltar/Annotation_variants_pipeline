@@ -1056,10 +1056,10 @@ tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_
 
 
 
-outfile_Prepared_files_and_add_annotation_layer=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+outfile_Prepared_files_and_add_annotation_layer=$(echo "$output_dir""outfile""_""$type"".out")
 touch $outfile_Prepared_files_and_add_annotation_layer
 echo -n "" > $outfile_Prepared_files_and_add_annotation_layer
-name_Prepared_files_and_add_annotation_layer=$(echo "$type""_""$Open_in_CT_threshold""_job")
+name_Prepared_files_and_add_annotation_layer=$(echo "$type""_job")
 
 
 step_mem=$(expr $mem \* 1)
@@ -1108,10 +1108,10 @@ tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_
 
 
  
-outfile_Stats_Z_score=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+outfile_Stats_Z_score=$(echo "$output_dir""outfile""_""$type"".out")
 touch $outfile_Stats_Z_score
 echo -n "" > $outfile_Stats_Z_score
-name_Stats_Z_score=$(echo "$type""_""$Open_in_CT_threshold""_job")
+name_Stats_Z_score=$(echo "$type""_job")
 
 
 step_mem=$(expr $mem \* 1)
@@ -1128,8 +1128,6 @@ echo "--Master_file $Master_file \\" >> $output
 echo "--Table_of_labels $Table_of_labels \\" >> $output
 echo "--tracking_variants $tracking_variants \\" >> $output
 echo "--type $type --out $MASTER_ROUTE\"" >> $output
-
-
 
 
 echo "###################################################### Z_score_violin_plots  #####################################################################"  >> $output
@@ -1149,10 +1147,10 @@ tracking_variants=$(echo "chr1_202129205_G_A,chr12_111844956_C_T,chr18_60880701_
 
 
  
-outfile_Z_score_violin_plots=$(echo "$output_dir""outfile""_""$type""_""$Open_in_CT_threshold"".out")
+outfile_Z_score_violin_plots=$(echo "$output_dir""outfile""_""$type"".out")
 touch $outfile_Z_score_violin_plots
 echo -n "" > $outfile_Z_score_violin_plots
-name_Z_score_violin_plots=$(echo "$type""_""$Open_in_CT_threshold""_job")
+name_Z_score_violin_plots=$(echo "$type""_job")
 
 
 step_mem=$(expr $mem \* 1)

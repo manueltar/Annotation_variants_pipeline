@@ -442,34 +442,50 @@ Data_wrangling = function(option_list)
   cat("\n")
   cat(str(unique(Table_S6_subset$VAR)))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$Mechanistic_Class)))))
-  cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$Mechanistic_Class))))
-  cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$Manual_curation)))))
-  cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$Manual_curation))))
-  cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$MPRA_CLASS)))))
-  cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$MPRA_CLASS))))
-  cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$genIE_CLASS)))))
-  cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$genIE_CLASS))))
-  cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$Multi_Lineage)))))
-  cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$Multi_Lineage))))
-  cat("\n")
   cat(sprintf(as.character(names(summary(Table_S6_subset$M_and_M)))))
   cat("\n")
   cat(sprintf(as.character(summary(Table_S6_subset$M_and_M))))
   cat("\n")
-  cat(sprintf(as.character(names(summary(Table_S6_subset$MPRA_CLASS_2)))))
+  
+  levels_M_and_M_selected<-levels(Table_S6_subset$M_and_M)[c(1,2,3,13)]
+  
+  cat("levels_M_and_M_selected\n")
+  cat(sprintf(as.character(levels_M_and_M_selected)))
   cat("\n")
-  cat(sprintf(as.character(summary(Table_S6_subset$MPRA_CLASS_2))))
+  
+  Table_S6_subset$M_and_M_initial<-Table_S6_subset$M_and_M
+    
+    
+   
+  cat("Table_S6_subset_2_PRE\n")
+  cat(str(Table_S6_subset))
   cat("\n")
+  cat(str(unique(Table_S6_subset$VAR)))
+  cat("\n")
+  cat(sprintf(as.character(names(summary(Table_S6_subset$M_and_M_initial)))))
+  cat("\n")
+  cat(sprintf(as.character(summary(Table_S6_subset$M_and_M_initial))))
+  cat("\n")
+  
+  
+  Table_S6_subset$M_and_M_initial<-revalue(Table_S6_subset$M_and_M_initial,
+                                          c('Transcriptional R.|R in candidate'='Transcriptional R.',
+                                            'Transcriptional R. + ATU|R in candidate'='Transcriptional R.',
+                                            'ATU|R in candidate'='Transcriptional R.'))
+  
+  
+  cat("Table_S6_subset_2_POST\n")
+  cat(str(Table_S6_subset))
+  cat("\n")
+  cat(str(unique(Table_S6_subset$VAR)))
+  cat("\n")
+  cat(sprintf(as.character(names(summary(Table_S6_subset$M_and_M_initial)))))
+  cat("\n")
+  cat(sprintf(as.character(summary(Table_S6_subset$M_and_M_initial))))
+  cat("\n")
+  
+  # #############################################################################
+  # quit(status = 1)
  
   
   #### Merge all labels ----
