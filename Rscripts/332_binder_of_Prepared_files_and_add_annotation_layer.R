@@ -469,9 +469,12 @@ Data_wrangling = function(option_list)
   
   
   Table_S6_subset$M_and_M_initial<-revalue(Table_S6_subset$M_and_M_initial,
-                                          c('Transcriptional R.|R in candidate'='Transcriptional R.',
-                                            'Transcriptional R. + ATU|R in candidate'='Transcriptional R.',
-                                            'ATU|R in candidate'='Transcriptional R.'))
+                                          c('Transcriptional R.|R in candidate'='R in candidate',
+                                            'Transcriptional R. + ATU|R in candidate'='R in candidate',
+                                            'ATU|R in candidate'='R in candidate',
+                                            'Transcriptional R.|Other tissue needed'='Other tissue needed',
+                                            'Transcriptional R. + ATU|Other tissue needed'='Other tissue needed',
+                                            'NRD|Other tissue needed'='Other tissue needed'))
   
   
   cat("Table_S6_subset_2_POST\n")
@@ -484,8 +487,6 @@ Data_wrangling = function(option_list)
   cat(sprintf(as.character(summary(Table_S6_subset$M_and_M_initial))))
   cat("\n")
   
-  # #############################################################################
-  # quit(status = 1)
  
   
   #### Merge all labels ----

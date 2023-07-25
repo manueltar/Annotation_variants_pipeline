@@ -103,6 +103,10 @@ Stats_function = function(option_list)
   cat("\n")
   cat(sprintf(as.character(summary(Table_of_labels$M_and_M))))
   cat("\n")
+  cat(sprintf(as.character(names(summary(Table_of_labels$M_and_M_initial)))))
+  cat("\n")
+  cat(sprintf(as.character(summary(Table_of_labels$M_and_M_initial))))
+  cat("\n")
   cat(sprintf(as.character(names(summary(Table_of_labels$Multi_Lineage)))))
   cat("\n")
   cat(sprintf(as.character(summary(Table_of_labels$Multi_Lineage))))
@@ -121,7 +125,7 @@ Stats_function = function(option_list)
   cat("\n")
   
   
-  levels_M_and_M_initial_selected<-levels(Table_of_labels$M_and_M_initial)[c(1,11)]
+  levels_M_and_M_initial_selected<-levels(Table_of_labels$M_and_M_initial)[c(1,4,9)]
   
   cat("levels_M_and_M_initial_selected\n")
   cat(sprintf(as.character(levels_M_and_M_initial_selected)))
@@ -134,7 +138,7 @@ Stats_function = function(option_list)
   
   ####   LOOP Through variables ----
   
-  category_vector<-c("Fig1_Annot_Category","MPRA_CLASS",'M_and_M_initial',"M_and_M","Multi_Lineage")
+  category_vector<-c("Fig1_Annot_Category","MPRA_CLASS","M_and_M",'M_and_M_initial',"Multi_Lineage")
   
   
   List_DEF<-list()
@@ -710,12 +714,12 @@ Stats_function = function(option_list)
     
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "Fig1_Annot_Category")]<-"Figure_1"
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "MPRA_CLASS")]<-"Figure_S2"
-    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "M_and_M_initial")]<-'Comparison Manual curation 1'
+    Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "M_and_M_initial")]<-'Comparison Manual curation'
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "M_and_M")]<-'Comparison Manual curation 2'
     Wilcox_df_4$Related_figure[which(Wilcox_df_4$Annotation == "Multi_Lineage")]<-"Figure_5"
     
     Wilcox_df_4$Related_figure<-factor(Wilcox_df_4$Related_figure,
-                                       levels=c("Figure_1","Figure_S2",'Comparison Manual curation 1','Comparison Manual curation 2',"Figure_5"),
+                                       levels=c("Figure_1","Figure_S2",'Comparison Manual curation','Comparison Manual curation 2',"Figure_5"),
                                        ordered=T)
     
     cat("Wilcox_df_4_1\n")
@@ -727,7 +731,7 @@ Stats_function = function(option_list)
     
     setwd(out)
     
-    write.table(Wilcox_df_4[,-which(colnames(Wilcox_df_4) == "Annotation")],file="Table_S2.tsv", sep="\t", row.names=F,quote=F)
+    write.table(Wilcox_df_4[which(Wilcox_df_4$Annotation != "M_and_M"),-which(colnames(Wilcox_df_4) == "Annotation")],file="Table_S2.tsv", sep="\t", row.names=F,quote=F)
     
     saveRDS(Wilcox_df_4,file="STATS_value_Z_score.rds")
     
