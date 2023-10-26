@@ -710,8 +710,8 @@ main = function() {
   opt <<- parse_args(parser)
   
  
- # Contigency_annotation_ALL(opt)
- # statistics_range_analysis(opt)
+ Contigency_annotation_ALL(opt)
+ statistics_range_analysis(opt)
  violin_plots(opt)
  
 }
